@@ -7,6 +7,9 @@ class Board:
     def __init__(self):
         pass
 
+    def draw_square(self, row, col, win, colour):
+        pygame.draw.rect(win, colour, (col*SQUARE, row*SQUARE, SQUARE, SQUARE))
+
     def draw_new_board(self, win, state):
         win.fill(GREEN)
         for row in range(ROW):

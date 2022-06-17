@@ -12,6 +12,8 @@ GREY = (240, 233, 216)
 GREEN = (110, 235, 125)
 
 ORANGE = 0xe39f46
+PURPLE = 0x6134eb
+
 
 BACK_RANK_SETUP = ['R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R']
 #PIECE_TYPE = {'R', 'N', 'B', 'Q', 'K'}

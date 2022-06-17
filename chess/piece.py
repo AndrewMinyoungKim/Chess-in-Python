@@ -13,13 +13,13 @@ class Piece:
         self.x = 0
         self.y = 0
         self.calc_pos()
-        self.draw_new_piece(self.win)
+        self.draw_piece(self.win)
 
     def calc_pos(self):
         self.x = SQUARE * self.col + SQUARE // 2
         self.y = SQUARE * self.row + SQUARE // 2
 
-    def draw_new_piece(self, win):
+    def draw_piece(self, win):
         if self.colour == BLACK:
             colour_initial = 'b'
         elif self.colour == WHITE:
