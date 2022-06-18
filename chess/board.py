@@ -14,8 +14,6 @@ class Board:
     def draw_new_board(self, win, state):
         win.fill(GREEN)
         for row in range(ROW):
-            # for col in range(row % 2, ROW, 2):
-            #     pygame.draw.rect(win, GREY, (row*SQUARE, col*SQUARE, SQUARE, SQUARE))
             for col in range(COL):
                 if(not (row + col) % 2):
                     pygame.draw.rect(win, GREY, (row*SQUARE, col*SQUARE, SQUARE, SQUARE))

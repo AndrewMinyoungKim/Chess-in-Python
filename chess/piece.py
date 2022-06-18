@@ -84,6 +84,8 @@ class Piece:
                         board.draw_square(self.row+direction, self.col-1, self.win, ORANGE)
                         state[self.row+direction][self.col-1].draw_piece(win)
 
+        return avail_moves
+
     def knight_movement(self, erase, board, state, win):
         avail_moves = []
         return avail_moves
@@ -93,76 +95,82 @@ class Piece:
     def bishop_movement(self, erase, board, state, win):
         avail_moves = []
         row, col = self.row, self.col
-        box_colour = ORANGE
 
         # NW
         row = self.row - 1
         col = self.col - 1
         while(row >= 0 and col >= 0 and not state[row][col]):
             if(erase):
-                box_colour = GREY if (row + col) % 2 == 0 else GREEN
-            board.draw_square(row, col, win, box_colour)
+                board.draw_square(row, col, win, GREY if (row + col) % 2 == 0 else GREEN)
+            
+            avail_moves.append((row, col))
             row -= 1
             col -= 1
         if(row >= 0 and col >= 0):
             if(state[row][col].colour != self.colour):
                 if(erase):
-                    box_colour = GREY if (row + col) % 2 == 0 else GREEN
-                board.draw_selected_piece(row, col, win, box_colour, state)
+                    board.draw_selected_piece(row, col, win, GREY if (row + col) % 2 == 0 else GREEN, state)
+                
+                avail_moves.append((row, col))
 
         # NE
         row = self.row - 1
         col = self.col + 1
         while(row >= 0 and col < 8 and not state[row][col]):
             if(erase):
-                box_colour = GREY if (row + col) % 2 == 0 else GREEN
-            board.draw_square(row, col, win, box_colour)
+                board.draw_square(row, col, win, GREY if (row + col) % 2 == 0 else GREEN)
+            
+            avail_moves.append((row, col))
             row -= 1
             col += 1
         if(row >= 0 and col < 8):
             if(state[row][col].colour != self.colour):
                 if(erase):
-                    box_colour = GREY if (row + col) % 2 == 0 else GREEN
-                board.draw_selected_piece(row, col, win, box_colour, state)
+                    board.draw_selected_piece(row, col, win, GREY if (row + col) % 2 == 0 else GREEN, state)
+                
+                avail_moves.append((row, col))
 
         # SE
         row = self.row + 1
         col = self.col + 1
         while(row < 8 and col < 8 and not state[row][col]):
             if(erase):
-                box_colour = GREY if (row + col) % 2 == 0 else GREEN
-            board.draw_square(row, col, win, box_colour)
+                board.draw_square(row, col, win, GREY if (row + col) % 2 == 0 else GREEN)
+            
+            avail_moves.append((row, col))
             row += 1
             col += 1
         if(row < 8 and col < 8):
             if(state[row][col].colour != self.colour):
                 if(erase):
-                    box_colour = GREY if (row + col) % 2 == 0 else GREEN
-                board.draw_selected_piece(row, col, win, box_colour, state)
+                    board.draw_selected_piece(row, col, win, GREY if (row + col) % 2 == 0 else GREEN, state)
+                
+                avail_moves.append((row, col))
 
         # SW
         row = self.row + 1
         col = self.col - 1
         while(row < 8 and col >= 0 and not state[row][col]):
             if(erase):
-                box_colour = GREY if (row + col) % 2 == 0 else GREEN
-            board.draw_square(row, col, win, box_colour)
+                board.draw_square(row, col, win, GREY if (row + col) % 2 == 0 else GREEN)
+
+            avail_moves.append((row, col))
             row += 1
             col -= 1
         if(row < 8 and col >= 0):
             if(state[row][col].colour != self.colour):
                 if(erase):
-                    box_colour = GREY if (row + col) % 2 == 0 else GREEN
-                board.draw_selected_piece(row, col, win, box_colour, state)
+                    board.draw_selected_piece(row, col, win, GREY if (row + col) % 2 == 0 else GREEN, state)
 
-        #return avail_moves
+                avail_moves.append((row, col))
+
+        return avail_moves
 
     # rook movement
     #CHECK FOR CHECKS
     def rook_movement(self, erase, board, state, win):
         avail_moves = []
         row, col = self.row, self.col
-        box_colour = ORANGE
 
         #CHECK FOR CHECKS
         # ADD TO LIST AVAILBLE MOVES AND RETURN TO GAME AND CALL BOARD FUNCTIONS FROM THERE
@@ -174,27 +182,31 @@ class Piece:
         row = self.row - 1
         while(row >= 0 and not state[row][col]):
             if(erase):
-                box_colour = GREY if (row + col) % 2 == 0 else GREEN
-            board.draw_square(row, col, win, box_colour)
+                board.draw_square(row, col, win, GREY if (row + col) % 2 == 0 else GREEN)
+            
+            avail_moves.append((row, col))
             row -= 1
         if(row >= 0):
             if(state[row][col].colour != self.colour):
                 if(erase):
-                    box_colour = GREY if (row + col) % 2 == 0 else GREEN
-                board.draw_selected_piece(row, col, win, box_colour, state)
+                    board.draw_selected_piece(row, col, win, GREY if (row + col) % 2 == 0 else GREEN, state)
+
+                avail_moves.append((row, col))
 
         # right
         row = self.row + 1
         while(row < 8 and not state[row][col]):
             if(erase):
-                box_colour = GREY if (row + col) % 2 == 0 else GREEN
-            board.draw_square(row, col, win, box_colour)
+                board.draw_square(row, col, win, GREY if (row + col) % 2 == 0 else GREEN)
+            
+            avail_moves.append((row, col))
             row += 1
         if(row < 8):
             if(state[row][col].colour != self.colour):
                 if(erase):
-                    box_colour = GREY if (row + col) % 2 == 0 else GREEN
-                board.draw_selected_piece(row, col, win, box_colour, state)
+                    board.draw_selected_piece(row, col, win, GREY if (row + col) % 2 == 0 else GREEN, state)
+                
+                avail_moves.append((row, col))
 
         row = self.row
         # file movement
@@ -202,51 +214,166 @@ class Piece:
         col = self.col - 1
         while(col >= 0 and not state[row][col]):
             if(erase):
-                box_colour = GREY if (row + col) % 2 == 0 else GREEN
-            board.draw_square(row, col, win, box_colour)
+                board.draw_square(row, col, win, GREY if (row + col) % 2 == 0 else GREEN)
+            
+            avail_moves.append((row, col))
             col -= 1
         if(col >= 0):
             if(state[row][col].colour != self.colour):
                 if(erase):
-                    box_colour = GREY if (row + col) % 2 == 0 else GREEN
-                board.draw_selected_piece(row, col, win, box_colour, state)
+                    board.draw_selected_piece(row, col, win, GREY if (row + col) % 2 == 0 else GREEN, state)
+                
+                avail_moves.append((row, col))
         
         # down
         col = self.col + 1
         while(col < 8 and not state[row][col]):
             if(erase):
-                box_colour = GREY if (row + col) % 2 == 0 else GREEN
-            board.draw_square(row, col, win, box_colour)
+                board.draw_square(row, col, win, GREY if (row + col) % 2 == 0 else GREEN)
+            
+            avail_moves.append((row, col))
             col -= 1
         if(col < 8):
             if(state[row][col].colour != self.colour):
                 if(erase):
-                    box_colour = GREY if (row + col) % 2 == 0 else GREEN
-                board.draw_selected_piece(row, col, win, box_colour, state)
+                    board.draw_selected_piece(row, col, win, GREY if (row + col) % 2 == 0 else GREEN, state)
+                
+                avail_moves.append((row, col))
 
-        #return avail_moves
+        return avail_moves
 
     def queen_movement(self, erase, board, state, win):
         avail_moves = []
-        # straight = self.rook_movement(erase, board, state, win)
-        # diagonal = self.bishop_movement(erase, board, state, win)
+        straight = self.rook_movement(erase, board, state, win)
+        diagonal = self.bishop_movement(erase, board, state, win)
 
         #using a quick loop to append everything
         # for direction in (straight, diagonal):
-        #    avail_moves.append(direction) #what is the name of the extended list?
+        #    avail_moves.append(list) #what is the name of the extended list?
 
         #using a list comprehension and normal loop to append
-        # avail_moves = [straight[i] for i in straight]
-        # for i in diagonal:
-        #     avail_moves.append(diagonal[i])
+        avail_moves = [(x, y) for x, y, *_ in straight]
+        for x, y in diagonal:
+            avail_moves.append((x, y))
 
-        self.rook_movement(erase, board, state, win)
-        self.bishop_movement(erase, board, state, win)
-
-        # return avail_moves
+        return avail_moves
 
     def king_movement(self, erase, board, state, win):
         avail_moves = []
+        left, right, up, down = False, False, False, False
+
+        #LOOK FOR CASTLE OPTION, AFTER FIRST KING MOVE, SET CASTLE TO FALSE
+        #LOOK FOR CHECKS AND WHAT'S UNAVAILABLE
+
+        # each direction
+        if(self.row-1 >= 0):
+            left = True
+            if(state[self.row-1][self.col]):
+                if(state[self.row-1][self.col].colour == state[self.row][self.col].colour):
+                    pass
+                else:
+                    if(erase):
+                        board.draw_selected_piece(self.row-1, self.col, win, GREY if (self.row-1 + self.col) % 2 == 0 else GREEN, state)
+                    avail_moves.append((self.row-1, self.col))
+            else:
+                if(erase):
+                    board.draw_square(self.row-1, self.col, win, GREY if (self.row-1 + self.col) % 2 == 0 else GREEN)
+                avail_moves.append((self.row-1, self.col))
+        if(self.row+1 < 8):
+            right = True
+            if(state[self.row+1][self.col]):
+                if(state[self.row+1][self.col].colour == state[self.row][self.col].colour):
+                    pass
+                else:
+                    if(erase):
+                        board.draw_selected_piece(self.row+1, self.col, win, GREY if (self.row+1 + self.col) % 2 == 0 else GREEN, state)
+                    avail_moves.append((self.row+1, self.col))
+            else:
+                if(erase):
+                    board.draw_square(self.row+1, self.col, win, GREY if (self.row+1 + self.col) % 2 == 0 else GREEN)
+                avail_moves.append((self.row+1, self.col))
+        if(self.col-1 >= 0):
+            up = True
+            if(state[self.row][self.col-1]):
+                if(state[self.row][self.col-1].colour == state[self.row][self.col].colour):
+                    pass
+                else:
+                    if(erase):
+                        board.draw_selected_piece(self.row, self.col-1, win, GREY if (self.row + self.col-1) % 2 == 0 else GREEN, state)
+                    avail_moves.append((self.row, self.col-1))
+            else:
+                if(erase):
+                    board.draw_square(self.row, self.col-1, win, GREY if (self.row + self.col-1) % 2 == 0 else GREEN)
+                avail_moves.append((self.row, self.col-1))
+        if(self.col+1 < 8):
+            down = True
+            if(state[self.row][self.col+1]):
+                if(state[self.row][self.col+1].colour == state[self.row][self.col].colour):
+                    pass
+                else:
+                    if(erase):
+                        board.draw_selected_piece(self.row, self.col+1, win, GREY if (self.row + self.col+1) % 2 == 0 else GREEN, state)
+                    avail_moves.append((self.row, self.col+1))
+            else:
+                if(erase):
+                    board.draw_square(self.row, self.col+1, win, GREY if (self.row + self.col+1) % 2 == 0 else GREEN)
+                avail_moves.append((self.row, self.col+1))
+
+        # diagonals
+        if(left and up):
+            if(state[self.row-1][self.col-1]):
+                if(state[self.row-1][self.col-1].colour == state[self.row][self.col].colour):
+                    pass
+                else:
+                    if(erase):
+                        board.draw_selected_piece(self.row-1, self.col-1, win, GREY if (self.row-1 + self.col-1) % 2 == 0 else GREEN, state)
+                    avail_moves.append((self.row-1, self.col-1))
+            else:
+                if(erase):
+                    board.draw_square(self.row-1, self.col-1, win, GREY if (self.row-1 + self.col-1) % 2 == 0 else GREEN)
+                avail_moves.append((self.row-1, self.col-1))
+
+        if(right and up):
+            if(state[self.row+1][self.col-1]):
+                if(state[self.row+1][self.col-1].colour == state[self.row][self.col].colour):
+                    pass
+                else:
+                    if(erase):
+                        board.draw_selected_piece(self.row+1, self.col-1, win, GREY if (self.row+1 + self.col-1) % 2 == 0 else GREEN, state)
+                    avail_moves.append((self.row+1, self.col-1))
+            else:
+                if(erase):
+                    board.draw_square(self.row+1, self.col-1, win, GREY if (self.row+1 + self.col-1) % 2 == 0 else GREEN)
+                avail_moves.append((self.row+1, self.col-1))
+
+        if(left and down):
+            if(state[self.row-1][self.col+1]):
+                if(state[self.row-1][self.col+1].colour == state[self.row][self.col].colour):
+                    pass
+                else:
+                    if(erase):
+                        board.draw_selected_piece(self.row-1, self.col+1, win, GREY if (self.row-1 + self.col+1) % 2 == 0 else GREEN, state)
+                    avail_moves.append((self.row-1, self.col+1))
+            else:
+                if(erase):
+                    board.draw_square(self.row-1, self.col+1, win, GREY if (self.row-1 + self.col+1) % 2 == 0 else GREEN)
+                avail_moves.append((self.row-1, self.col+1))
+
+        if(right and down):
+            if(state[self.row+1][self.col+1]):
+                if(state[self.row+1][self.col+1].colour == state[self.row][self.col].colour):
+                    pass
+                else:
+                    if(erase):
+                        board.draw_selected_piece(self.row+1, self.col+1, win, GREY if (self.row+1 + self.col+1) % 2 == 0 else GREEN, state)
+                    avail_moves.append((self.row+1, self.col+1))
+            else:
+                if(erase):
+                    board.draw_square(self.row+1, self.col+1, win, GREY if (self.row+1 + self.col+1) % 2 == 0 else GREEN)
+                avail_moves.append((self.row+1, self.col+1))
+
+
+
         return avail_moves
 
     # movement of each piece
@@ -254,14 +381,14 @@ class Piece:
     def movement(self, erase, board, state, win):
         #white_piece = WHITE if self.colour == WHITE else BLACK
         if(self.name == 'P'):
-            self.pawn_movement(erase, board, state, win)
+            return self.pawn_movement(erase, board, state, win)
         elif(self.name == 'N'):
-            self.knight_movement(erase, board, state, win)
+            return self.knight_movement(erase, board, state, win)
         elif(self.name == 'B'):
-            self.bishop_movement(erase, board, state, win)
+            return self.bishop_movement(erase, board, state, win)
         elif(self.name == 'R'):
-            self.rook_movement(erase, board, state, win)
+            return self.rook_movement(erase, board, state, win)
         elif(self.name == 'Q'):
-            self.queen_movement(erase, board, state, win)
+            return self.queen_movement(erase, board, state, win)
         elif(self.name == 'K'):
-            self.king_movement(erase, board, state, win)
+            return self.king_movement(erase, board, state, win)
