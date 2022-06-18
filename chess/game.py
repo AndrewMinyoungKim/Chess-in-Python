@@ -27,6 +27,8 @@ class Game:
         self.selected_x = 0
         self.selected_y = 0
 
+        self.available_moves = []
+
     def update(self):
         pygame.display.update()
 
@@ -35,11 +37,10 @@ class Game:
 
         # selecting a piece when it's your turn
         if(not self.selected and self.state[row][col]):
-            pass
-            #write code for choosing a piece to move
+            
+            # write code for choosing a piece to move
             if(self.state[row][col].colour == self.turn):
-                self.board.draw_square(row, col, self.win, PURPLE)
-                self.state[row][col].draw_piece(self.win)
+                self.board.draw_selected_piece(row, col, self.win, PURPLE, self.state)
                 
                 self.selected = True
                 self.selected_x, self.selected_y = row, col
@@ -68,18 +69,12 @@ class Game:
             # selecting another piece when one was already selected 
             elif(self.state[row][col].colour == self.turn):
                 # erase previously coloured in boxes
-                if((self.selected_x + self.selected_y) % 2):
-                    self.board.draw_square(self.selected_x, self.selected_y, self.win, GREEN)
-                    self.state[self.selected_x][self.selected_y].draw_piece(self.win)
-                else:
-                    self.board.draw_square(self.selected_x, self.selected_y, self.win, GREY)
-                    self.state[self.selected_x][self.selected_y].draw_piece(self.win)
-
+                self.board.draw_selected_piece(self.selected_x, self.selected_y, self.win, GREEN if (self.selected_x + self.selected_y) % 2 else GREY, self.state)
                 erase = True
                 self.state[self.selected_x][self.selected_y].movement(erase, self.board, self.state, self.win)
 
-                self.board.draw_square(row, col, self.win, PURPLE)
-                self.state[row][col].draw_piece(self.win)
+                # write code for choosing a piece to move
+                self.board.draw_selected_piece(row, col, self.win, PURPLE, self.state)
                 
                 self.selected_x, self.selected_y = row, col
 

@@ -9,12 +9,17 @@ class Board:
 
     def draw_square(self, row, col, win, colour):
         pygame.draw.rect(win, colour, (col*SQUARE, row*SQUARE, SQUARE, SQUARE))
+        pygame.draw.rect(win, NAVY, (col*SQUARE, row*SQUARE, SQUARE, SQUARE), 2)
 
     def draw_new_board(self, win, state):
         win.fill(GREEN)
         for row in range(ROW):
-            for col in range(row % 2, ROW, 2):
-                pygame.draw.rect(win, GREY, (row*SQUARE, col*SQUARE, SQUARE, SQUARE))
+            # for col in range(row % 2, ROW, 2):
+            #     pygame.draw.rect(win, GREY, (row*SQUARE, col*SQUARE, SQUARE, SQUARE))
+            for col in range(COL):
+                if(not (row + col) % 2):
+                    pygame.draw.rect(win, GREY, (row*SQUARE, col*SQUARE, SQUARE, SQUARE))
+                pygame.draw.rect(win, NAVY, (row*SQUARE, col*SQUARE, SQUARE, SQUARE), 2)
 
     def new_board(self, win, state):
         self.draw_new_board(win, state)
@@ -25,9 +30,13 @@ class Board:
                     state[row].append(Piece(BACK_RANK_SETUP[col], row, col, WHITE, win))
                 elif(row == 7):
                     state[row].append(Piece(BACK_RANK_SETUP[col], row, col, BLACK, win))
-                elif(row == 1):
-                    state[row].append(Piece('P', row, col, WHITE, win))
-                elif(row == 6):
-                    state[row].append(Piece('P', row, col, BLACK, win))
+                # elif(row == 1):
+                #     state[row].append(Piece('P', row, col, WHITE, win))
+                # elif(row == 6):
+                #     state[row].append(Piece('P', row, col, BLACK, win))
                 else:
                     state[row].append(0)
+
+    def draw_selected_piece(self, row, col, win, colour, state):
+        self.draw_square(row, col, win, colour)
+        state[row][col].draw_piece(win)
