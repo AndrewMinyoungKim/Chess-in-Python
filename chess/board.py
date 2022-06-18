@@ -22,12 +22,12 @@ class Board:
             state.append([])
             for col in range(COL):
                 if(row == 0):
-                    state[row].append(Piece(BACK_RANK_SETUP[col], row, col, BLACK, win))
-                elif(row == 7):
                     state[row].append(Piece(BACK_RANK_SETUP[col], row, col, WHITE, win))
+                elif(row == 7):
+                    state[row].append(Piece(BACK_RANK_SETUP[col], row, col, BLACK, win))
                 elif(row == 1):
-                    state[row].append(Piece('P', row, col, BLACK, win))
-                elif(row == 6):
                     state[row].append(Piece('P', row, col, WHITE, win))
+                elif(row == 6):
+                    state[row].append(Piece('P', row, col, BLACK, win))
                 else:
                     state[row].append(0)

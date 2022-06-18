@@ -1,6 +1,6 @@
 import pygame
 
-WIDTH, HEIGHT = 600, 600
+WIDTH, HEIGHT = 800, 800
 ROW, COL = 8, 8
 SQUARE = HEIGHT//COL
 #SQUARE = pygame.display.get_window_size() // ROW # not initialized
