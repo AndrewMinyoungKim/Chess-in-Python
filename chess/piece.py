@@ -30,6 +30,10 @@ class Piece:
         image = pygame.transform.scale(pygame.image.load(png_image_path), (SQUARE, SQUARE))
         win.blit(image, (self.x - image.get_width()//2, self.y - image.get_height()//2))
 
+    # INCORPORATE CODE FOR PAWN PROMOTION
+    def promotion(self):
+        print("farts")
+
 
     # CREATE A DRAW PAWN OPTIONS FUNCTION IN BOARD, AND JUST BRING BACK A LIST OF COORDINATES THAT ARE AVAILABLE FOR MOVING TO GAME SO YOU CAN CHECK FOR CHECKS TO ENSURE ITS A
     # VALID MOVE AND POP OUT ANY MOVES THAT CAUSE A CHECK
@@ -37,6 +41,7 @@ class Piece:
     def pawn_movement(self, erase, board, state, win):
         avail_moves = []
 
+        # useful variables
         first_move = False
         if(self.colour == WHITE):
             direction = 1
@@ -49,48 +54,146 @@ class Piece:
             if(self.row == 6):
                 first_move = True
 
-        # erase movements from previously selected piece
-        if(erase):
-            board.draw_square(self.row+direction, self.col, self.win, GREY if (self.row+direction + self.col) % 2 == 0 else GREEN)
-            if(first_move):
-                board.draw_square(self.row+(2*direction), self.col, self.win, GREY if (self.row+(2*direction) + self.col) % 2 == 0 else GREEN)
+        # forward movement
+        if(self.row+direction >= 0 and self.row+direction < 8):
+            row, col = self.row+direction, self.col
+            if(not state[row][col]):
+                if(erase):
+                    board.draw_square(row, col, self.win, GREY if (row + col) % 2 == 0 else GREEN)
+                avail_moves.append((row, col))
 
-        # regular pawn movements
-        else:
-            board.draw_square(self.row+direction, self.col, self.win, ORANGE)
-            if(first_move): # allow two space up moves for first pawn movements
-                board.draw_square(self.row+(2*direction), self.col, self.win, ORANGE)
+                if(first_move):
+                    if(not state[self.row+(2*direction)][self.col]):
+                        row += direction
+                        if(erase):
+                            board.draw_square(row, col, self.win, GREY if (row + col) % 2 == 0 else GREEN)
+                        avail_moves.append((row, col))
 
-            # check diagonal attacks
-            # don't go out of list index range if one of the rook's pawns
-            if(self.col == 0):
-                if(state[self.row+direction][self.col+direction]):
-                    if(state[self.row+direction][self.col+direction].colour == opponent):
-                        board.draw_square(self.row+direction, self.col+1, self.win, ORANGE)
-                        state[self.row+direction][self.col+1].draw_piece(win)
-            elif(self.col == 7):
-                if(state[self.row+direction][self.col-1]):
-                    if(state[self.row+direction][self.col-1].colour == opponent):
-                        board.draw_square(self.row+direction, self.col-1, self.win, ORANGE)
-                        state[self.row+direction][self.col-1].draw_piece(win)
-            else:
-                if(state[self.row+direction][self.col+direction]):
-                    if(state[self.row+direction][self.col+direction].colour == opponent):
-                        board.draw_square(self.row+direction, self.col+1, self.win, ORANGE)
-                        state[self.row+direction][self.col+1].draw_piece(win)
+        # diagonal attack
+        #left side
+        if(self.row+direction >= 0 and self.row+direction < 8 and self.col-1 >= 0):
+            row, col = self.row+direction, self.col-1
+            if(state[row][col]):
+                if(state[row][col].colour != state[self.row][self.col]):
+                    if(erase):
+                        board.draw_selected_piece(row, col, self.win, GREY if (row + col) % 2 == 0 else GREEN, state)
+                    avail_moves.append((row, col))
 
-                if(state[self.row+direction][self.col-1]):
-                    if(state[self.row+direction][self.col-1].colour == opponent):
-                        board.draw_square(self.row+direction, self.col-1, self.win, ORANGE)
-                        state[self.row+direction][self.col-1].draw_piece(win)
+        #right side
+        if(self.row+direction >= 0 and self.row+direction < 8 and self.col+1 < 8):
+            row, col = self.row+direction, self.col+1
+            if(state[row][col]):
+                if(state[row][col].colour != state[self.row][self.col]):
+                    if(erase):
+                        board.draw_selected_piece(row, col, self.win, GREY if (row + col) % 2 == 0 else GREEN, state)
+                    avail_moves.append((row, col))
 
         return avail_moves
 
     def knight_movement(self, erase, board, state, win):
         avail_moves = []
+
+        #up side
+        if(self.row-2 >= 0 and self.col-1 >= 0):
+            row, col = self.row-2, self.col-1
+            if(state[row][col]):
+                if(state[row][col].colour != state[self.row][self.col].colour):
+                    if(erase):
+                        board.draw_selected_piece(row, col, win, GREY if (row + col) % 2 == 0 else GREEN, state)
+                    avail_moves.append((row, col))
+            else:
+                if(erase):
+                    board.draw_square(row, col, win, GREY if (row + col) % 2 == 0 else GREEN)
+                avail_moves.append((row, col))
+
+        if(self.row-2 >= 0 and self.col+1 < 8):
+            row, col = self.row-2, self.col+1
+            if(state[row][col]):
+                if(state[row][col].colour != state[self.row][self.col].colour):
+                    if(erase):
+                        board.draw_selected_piece(row, col, win, GREY if (row + col) % 2 == 0 else GREEN, state)
+                    avail_moves.append((row, col))
+            else:
+                if(erase):
+                    board.draw_square(row, col, win, GREY if (row + col) % 2 == 0 else GREEN)
+                avail_moves.append((row, col))
+
+        #down side
+        if(self.row+2 < 8 and self.col-1 >= 0):
+            row, col = self.row+2, self.col-1
+            if(state[row][col]):
+                if(state[row][col].colour != state[self.row][self.col].colour):
+                    if(erase):
+                        board.draw_selected_piece(row, col, win, GREY if (row + col) % 2 == 0 else GREEN, state)
+                    avail_moves.append((row, col))
+            else:
+                if(erase):
+                    board.draw_square(row, col, win, GREY if (row + col) % 2 == 0 else GREEN)
+                avail_moves.append((row, col))
+
+        if(self.row+2 < 8 and self.col+1 < 8):
+            row, col = self.row+2, self.col+1
+            if(state[row][col]):
+                if(state[row][col].colour != state[self.row][self.col].colour):
+                    if(erase):
+                        board.draw_selected_piece(row, col, win, GREY if (row + col) % 2 == 0 else GREEN, state)
+                    avail_moves.append((row, col))
+            else:
+                if(erase):
+                    board.draw_square(row, col, win, GREY if (row + col) % 2 == 0 else GREEN)
+                avail_moves.append((row, col))
+
+        #left side
+        if(self.col-2 >= 0 and self.row-1 >= 0):
+            row, col = self.row-1, self.col-2
+            if(state[row][col]):
+                if(state[row][col].colour != state[self.row][self.col].colour):
+                    if(erase):
+                        board.draw_selected_piece(row, col, win, GREY if (row + col) % 2 == 0 else GREEN, state)
+                    avail_moves.append((row, col))
+            else:
+                if(erase):
+                    board.draw_square(row, col, win, GREY if (row + col) % 2 == 0 else GREEN)
+                avail_moves.append((row, col))
+
+        if(self.col-2 >= 0 and self.row+1 < 8):
+            row, col = self.row+1, self.col-2
+            if(state[row][col]):
+                if(state[row][col].colour != state[self.row][self.col].colour):
+                    if(erase):
+                        board.draw_selected_piece(row, col, win, GREY if (row + col) % 2 == 0 else GREEN, state)
+                    avail_moves.append((row, col))
+            else:
+                if(erase):
+                    board.draw_square(row, col, win, GREY if (row + col) % 2 == 0 else GREEN)
+                avail_moves.append((row, col))
+
+        #right side
+        if(self.col+2 < 8 and self.row-1 >= 0):
+            row, col = self.row-1, self.col+2
+            if(state[row][col]):
+                if(state[row][col].colour != state[self.row][self.col].colour):
+                    if(erase):
+                        board.draw_selected_piece(row, col, win, GREY if (row + col) % 2 == 0 else GREEN, state)
+                    avail_moves.append((row, col))
+            else:
+                if(erase):
+                    board.draw_square(row, col, win, GREY if (row + col) % 2 == 0 else GREEN)
+                avail_moves.append((row, col))
+
+        if(self.col+2 < 8 and self.row+1 < 8):
+            row, col = self.row+1, self.col+2
+            if(state[row][col]):
+                if(state[row][col].colour != state[self.row][self.col].colour):
+                    if(erase):
+                        board.draw_selected_piece(row, col, win, GREY if (row + col) % 2 == 0 else GREEN, state)
+                    avail_moves.append((row, col))
+            else:
+                if(erase):
+                    board.draw_square(row, col, win, GREY if (row + col) % 2 == 0 else GREEN)
+                avail_moves.append((row, col))
+
         return avail_moves
-
-
 
     def bishop_movement(self, erase, board, state, win):
         avail_moves = []
@@ -246,10 +349,6 @@ class Piece:
         avail_moves = []
         straight = self.rook_movement(erase, board, state, win)
         diagonal = self.bishop_movement(erase, board, state, win)
-
-        #using a quick loop to append everything
-        # for direction in (straight, diagonal):
-        #    avail_moves.append(list) #what is the name of the extended list?
 
         #using a list comprehension and normal loop to append
         avail_moves = [(x, y) for x, y, *_ in straight]
