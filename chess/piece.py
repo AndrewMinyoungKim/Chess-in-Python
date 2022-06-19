@@ -9,11 +9,21 @@ class Piece:
         self.row = row
         self.col = col
         self.colour = colour
+        if(self.colour == BLACK):
+            self.colour_word = "Black"
+        else:
+            self.colour_word = "White"
         self.win = win
         self.x = 0
         self.y = 0
         self.calc_pos()
         self.draw_piece(self.win)
+
+    def __del__(self):
+        # print(self.colour_word, self.name, "taken")
+        # print("The {0} {1} has been captured".format(self.colour_word, self.name))
+        # print("The {} {} has been captured".format(self.colour_word, self.name))
+        print("The {colour} {piece} has been captured".format(colour = self.colour_word, piece = self.name))
 
     def calc_pos(self):
         self.x = SQUARE * self.col + SQUARE // 2
@@ -280,8 +290,8 @@ class Piece:
 
 
 
-        # rank movement
-        # left
+        # file movement
+        # up
         row = self.row - 1
         while(row >= 0 and not state[row][col]):
             if(erase):
@@ -296,7 +306,7 @@ class Piece:
 
                 avail_moves.append((row, col))
 
-        # right
+        # down
         row = self.row + 1
         while(row < 8 and not state[row][col]):
             if(erase):
@@ -312,8 +322,8 @@ class Piece:
                 avail_moves.append((row, col))
 
         row = self.row
-        # file movement
-        # up
+        # rank movement
+        # left
         col = self.col - 1
         while(col >= 0 and not state[row][col]):
             if(erase):
@@ -328,14 +338,14 @@ class Piece:
                 
                 avail_moves.append((row, col))
         
-        # down
+        # right
         col = self.col + 1
         while(col < 8 and not state[row][col]):
             if(erase):
                 board.draw_square(row, col, win, GREY if (row + col) % 2 == 0 else GREEN)
             
             avail_moves.append((row, col))
-            col -= 1
+            col += 1
         if(col < 8):
             if(state[row][col].colour != self.colour):
                 if(erase):

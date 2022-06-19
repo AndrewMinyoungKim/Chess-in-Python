@@ -1,4 +1,5 @@
 import pygame
+import gc
 
 from .constants import *
 from .board import Board
@@ -9,10 +10,11 @@ class Game:
         self.win = win
         self.state = []
         self._init(self.win, self.state)
-        #dict(num_P = 8, num_N = 2, num_B = 2, num_R = 2, num_Q = 1)
+        #stalemate if all pieces are gone except the two kings
+        #all_pieces = dict(w_num_P = 8, w_num_N = 2, w_num_B = 2, w_num_R = 2, w_num_Q = 1, b_num_P = 8, b_num_N = 2, b_num_B = 2, b_num_R = 2, b_num_Q = 1)
 
     def _init(self, win, state):
-        self.turn = BLACK
+        self.turn = WHITE
         self.board = Board()
         self.board.new_board(win, state)
 
@@ -24,8 +26,7 @@ class Game:
         self.promotion = False
 
         self.selected = False
-        self.selected_x = 0
-        self.selected_y = 0
+        self.selected_x, self.selected_y = None, None
 
         self.available_moves = []
 
@@ -33,6 +34,7 @@ class Game:
         pygame.display.update()
 
     def mouseclick(self, row, col):
+        successful_turn = False
         erase = False
 
         # selecting a piece when one is not selected yet
@@ -67,20 +69,58 @@ class Game:
 
             # moving to an empty space
             if(not self.state[row][col] and (row, col) in self.available_moves):
-                #if no check
+                #erase previously coloured boxes
+                self.board.draw_selected_piece(self.selected_x, self.selected_y, self.win, GREY if (self.selected_x + self.selected_y) % 2 == 0 else GREEN, self.state)
+                erase = True
+                self.state[self.selected_x][self.selected_y].movement(erase, self.board, self.state, self.win)
                 self.selected = None
+
+                #make the switch
+                self.state[self.selected_x][self.selected_y], self.state[row][col] = self.state[row][col], self.state[self.selected_x][self.selected_y]
+                self.state[row][col].row = row
+                self.state[row][col].col = col
+                self.state[row][col].calc_pos()
+                self.board.draw_square(self.selected_x, self.selected_y, self.win, GREY if (self.selected_x + self.selected_y) % 2 == 0 else GREEN)
+                self.board.draw_selected_piece(row, col, self.win, GREY if (row + col) % 2 == 0 else GREEN, self.state)
+
+                #reset
+                self.selected = None
+                self.selected_x, self.selected_y = None, None
+                self.available_moves = []
+                successful_turn = True
+
             # capturing another piece
             elif(self.state[row][col] and (row, col) in self.available_moves):
-                #if(self.state[row][col].colour != self.turn): #redundant because we only included opponent pieces among all pieces in avail_moves list
-                #if no check
-                #self.state[row][col], self.state[self.selected_x][self.selected_y] = self.state[self.selected_x][self.selected_y], self.state[row][col]
+                #erase previously coloured boxes
+                self.board.draw_selected_piece(self.selected_x, self.selected_y, self.win, GREY if (self.selected_x + self.selected_y) % 2 == 0 else GREEN, self.state)
+                erase = True
+                self.state[self.selected_x][self.selected_y].movement(erase, self.board, self.state, self.win)
                 self.selected = None
+
+                #make the switch, delete the opponent piece in square
+                taken_piece = self.state[row][col]
+                self.state[row][col] = 0
+                del(taken_piece)
+                gc.collect()
+                self.state[self.selected_x][self.selected_y], self.state[row][col] = self.state[row][col], self.state[self.selected_x][self.selected_y]
+                self.state[row][col].row = row
+                self.state[row][col].col = col
+                self.state[row][col].calc_pos()
+                self.board.draw_square(self.selected_x, self.selected_y, self.win, GREY if (self.selected_x + self.selected_y) % 2 == 0 else GREEN)
+                self.board.draw_selected_piece(row, col, self.win, GREY if (row + col) % 2 == 0 else GREEN, self.state)
+
+                #reset
+                self.selected = None
+                self.selected_x, self.selected_y = None, None
+                self.available_moves = []
+                successful_turn = True
+                successful_turn = True
             
             # selecting another piece when one was already selected/clicking on another ally piece
             elif(self.state[row][col]):
                 if(self.state[row][col].colour == self.turn):
                     # erase previously coloured in boxes
-                    self.board.draw_selected_piece(self.selected_x, self.selected_y, self.win, GREEN if (self.selected_x + self.selected_y) % 2 else GREY, self.state)
+                    self.board.draw_selected_piece(self.selected_x, self.selected_y, self.win, GREY if (self.selected_x + self.selected_y) % 2 == 0 else GREEN, self.state)
                     erase = True
                     self.state[self.selected_x][self.selected_y].movement(erase, self.board, self.state, self.win)
 
@@ -106,16 +146,37 @@ class Game:
 
                 else:
                     # erase previously coloured in boxes
-                    self.board.draw_selected_piece(self.selected_x, self.selected_y, self.win, GREEN if (self.selected_x + self.selected_y) % 2 else GREY, self.state)
+                    self.board.draw_selected_piece(self.selected_x, self.selected_y, self.win, GREY if (self.selected_x + self.selected_y) % 2 == 0 else GREEN, self.state)
                     erase = True
                     self.state[self.selected_x][self.selected_y].movement(erase, self.board, self.state, self.win)
                     self.selected = None
 
             else:
                 # erase previously coloured in boxes
-                self.board.draw_selected_piece(self.selected_x, self.selected_y, self.win, GREEN if (self.selected_x + self.selected_y) % 2 else GREY, self.state)
+                self.board.draw_selected_piece(self.selected_x, self.selected_y, self.win, GREY if (self.selected_x + self.selected_y) % 2 == 0 else GREEN, self.state)
                 erase = True
                 self.state[self.selected_x][self.selected_y].movement(erase, self.board, self.state, self.win)
                 self.selected = None
+
+            
+            if(successful_turn):
+                if(self.turn == WHITE):
+                    self.turn = BLACK
+                    self.display_move(row, col)
+                    print("Black's Turn")
+                else:
+                    self.turn = WHITE
+                    self.display_move(row, col)
+                    print("White's Turn")
+    
+    #display move that was made
+    def display_move(self, row, col):
+        # IMPORTANT NOTE: When reading, the file letter comes first and THEN the rank number (e.g. d4), so it reads as Column THEN Row
+        if(self.state[row][col].name == 'P'):
+            print("{}{}".format(FILE[col], row+1))
+        else:
+            print("{}{}{}".format(self.state[row][col].name, FILE[col], row+1))
+
+            #need to implement rest of notation for checks, checkmates, captures, castles, etc.
             
             #need to check for if check occurs due to move

@@ -19,6 +19,7 @@ class Main:
         self.done = False
         self.clock = pygame.time.Clock()
         self.game = Game(self.window)
+        print("White Goes First")
 
         while not self.done:
 
