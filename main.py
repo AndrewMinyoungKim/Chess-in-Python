@@ -34,10 +34,18 @@ class Main:
                     self.pos = pygame.mouse.get_pos()
                     self.row, self.col = self.get_x_y_pos(self.pos)
 
-                    self.game.mouseclick(self.row, self.col)
+                    self.done = self.game.mouseclick(self.row, self.col)
+                    if(self.done):
+                        self.game.update()
+                        view_result = True
+                        while(view_result):
+                            if(event.type == pygame.QUIT):
+                                view_result = False
+                                sys.exit()
 
             self.game.update()
-
+        
+        sys.exit()
 
 if __name__ == '__main__':
     play = Main()

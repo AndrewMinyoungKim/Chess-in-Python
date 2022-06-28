@@ -23,7 +23,8 @@ class Piece:
         # print(self.colour_word, self.name, "taken")
         # print("The {0} {1} has been captured".format(self.colour_word, self.name))
         # print("The {} {} has been captured".format(self.colour_word, self.name))
-        print("The {colour} {piece} has been captured".format(colour = self.colour_word, piece = self.name))
+        if(not game_over):
+            print("The {colour} {piece} has been captured".format(colour = self.colour_word, piece = self.name))
 
     def calc_pos(self):
         self.x = SQUARE * self.col + SQUARE // 2

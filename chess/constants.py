@@ -25,3 +25,6 @@ PIECE_TYPE.add('P')
 
 # dictionary for file names
 FILE = {0: 'a', 1: 'b', 2: 'c', 3: 'd', 4: 'e', 5: 'f', 6: 'g', 7: 'h'}
+
+# one global variable to show whether the game is completed or not
+game_over = False
