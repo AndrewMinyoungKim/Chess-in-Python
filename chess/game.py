@@ -227,9 +227,15 @@ class Game:
 
     def __game_over(self):
         if(self.checkmate):
+            self.colour_king_in_check(BROWN)
             print("CHECKMATE")
-            if(self.turn != WHITE): winner = "White" # the turn was switched before calling function, used for finding any possible moves
-            else: winner = "Black"
+            if(self.turn != WHITE): # the turn was switched before calling function, used for finding any possible moves
+                winner = "White"
+                hue = 1
+            else:
+                winner = "Black"
+                hue = 0
+            self.board.draw_selected_piece(self.check.king[hue].row, self.check.king[hue].col, self.win, GOLD, self.state)
             print(f"Winner!: {winner}")
         
         elif(self.stalemate):

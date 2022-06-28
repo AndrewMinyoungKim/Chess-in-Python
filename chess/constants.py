@@ -13,6 +13,8 @@ GREEN = (110, 235, 125)
 
 ORANGE = 0xe39f46 # used for normal move display
 RED = 0xed0c1b # used for check display
+GOLD = 0xFFD700 # Winning Checkmate Colour!
+BROWN = 0xDAA06D # Losing Checkmate Colour :(
 PURPLE = 0x6134eb # highlight selected piece
 NAVY = (15, 28, 48) # padding/borders
 
