@@ -8,7 +8,13 @@ class SpecialMoves:
     def __init__(self):
         self.black_castle = True
         self.white_castle = True
+        self.white_kingside_castle = True
+        self.white_queenside_castle = True
+        self.black_kingside_castle = True
+        self.black_queenside_castle = True
+        
         self.en_passant = False
+        self.row_en_passant, self.col_en_passant = None, None
         self.en_passant_piece = None
 
     def check_castle(self, state, colour):

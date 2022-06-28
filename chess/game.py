@@ -29,13 +29,6 @@ class Game:
         # check for legal castles, promotions, en passants
         self.special_moves = SpecialMoves()
 
-        self.white_castle = True
-        self.black_castle = True
-        self.white_kingside_castle = True
-        self.white_queenside_castle = True
-        self.black_kingside_castle = True
-        self.black_queenside_castle = True
-
         # check for legal moves, any checks, and checkmates
         self.check = Check(state)
 
@@ -51,11 +44,20 @@ class Game:
             elif(self.state[row][col].colour == WHITE and row == 7):
                 self.special_moves.promotion(self.state, row, col)
 
+    def colour_king_in_check(self):
+        if(self.check.black_check):
+            hue = 0
+        else:
+            hue = 1
+        self.board.draw_selected_piece(self.check.king[hue].row, self.check.king[hue].col, self.win, RED, self.state)
+
     def erase_coloured_boxes(self):
         #erase previously coloured boxes
         self.board.draw_selected_piece(self.selected_x, self.selected_y, self.win, GREY if (self.selected_x + self.selected_y) % 2 == 0 else GREEN, self.state)
         erase = True
-        self.state[self.selected_x][self.selected_y].movement(erase, self.board, self.state, self.win)
+        self.state[self.selected_x][self.selected_y].movement(erase, self.board, self.state, self.win) # erase := True requires Python 3.8 or newer
+        if(self.check.check):
+            self.colour_king_in_check()
 
     def display_available_moves(self):
         for i in range(len(self.available_moves)):
@@ -71,7 +73,7 @@ class Game:
 
         erase = False
         del(self.available_moves)
-        self.available_moves = self.state[row][col].movement(erase, self.board, self.state, self.win)
+        self.available_moves = self.state[row][col].movement(erase, self.board, self.state, self.win) # erase := False requires Python 3.8 or newer
 
     def perform_move(self, row, col, attack):
         #make the switch, delete the opponent piece in square if(attack == True)
@@ -90,7 +92,6 @@ class Game:
         return True
 
     def reset_selected_moves(self):
-        #reset
         self.selected = False
         self.selected_x, self.selected_y = None, None
         self.available_moves.clear()
@@ -105,7 +106,11 @@ class Game:
             if(self.state[row][col].colour == self.turn):
                 self.select_piece(row, col)
                 #check for castle if king (and unmoved rook in clear rank) or check for en passant for pawn (need to memorize previous move, maybe use a variable to signify a pawn moved two squares)
-                check_pin = self.check.check_pin(self.state, row, col, self.available_moves, self.turn)
+                if(self.state[row][col].name != 'K'):
+                    self.check.check_pin(self.state, row, col, self.available_moves, self.turn)
+                else:
+                    self.check.check_legal_king(self.state, self.turn, self.available_moves)
+                
                 self.display_available_moves()
             
         # actions when a piece is already selected
@@ -114,17 +119,23 @@ class Game:
             # moving to an empty space
             if(not self.state[row][col] and (row, col) in self.available_moves):
                 self.erase_coloured_boxes()
-                successful_turn = self.perform_move(row, col, False)
+                successful_turn = self.perform_move(row, col, False) # attack := False
                 self.check_promotion(row, col)
-                check = self.check.check_check(self.state, self.turn)
+                self.check.check_check(self.state, self.turn)
+                if(self.check.check):
+                    print("CHECK!")
+                    self.colour_king_in_check()
                 self.reset_selected_moves()
 
             # capturing another piece
             elif(self.state[row][col] and (row, col) in self.available_moves):
                 self.erase_coloured_boxes()
-                successful_turn = self.perform_move(row, col, True)
+                successful_turn = self.perform_move(row, col, True) # attack := True
                 self.check_promotion(row, col)
-                check = self.check.check_check(self.state, self.turn)
+                self.check.check_check(self.state, self.turn)
+                if(self.check.check):
+                    print("CHECK!")
+                    self.colour_king_in_check()
                 self.reset_selected_moves()
 
             # selecting another piece when one was already selected/clicking on another ally piece
@@ -132,7 +143,12 @@ class Game:
                 if(self.state[row][col].colour == self.turn):
                     self.erase_coloured_boxes()
                     self.select_piece(row, col)
-                    check_pin = self.check.check_pin(self.state, row, col, self.available_moves, self.turn)
+                    #check for castle if king (and unmoved rook in clear rank) or check for en passant for pawn (need to memorize previous move, maybe use a variable to signify a pawn moved two squares)
+                    if(self.state[row][col].name != 'K'):
+                        self.check.check_pin(self.state, row, col, self.available_moves, self.turn)
+                    else:
+                        self.check.check_legal_king(self.state, self.turn, self.available_moves)
+
                     self.display_available_moves()
 
                 else:
