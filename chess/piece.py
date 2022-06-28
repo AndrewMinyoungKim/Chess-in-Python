@@ -40,11 +40,6 @@ class Piece:
         image = pygame.transform.scale(pygame.image.load(png_image_path), (SQUARE, SQUARE))
         win.blit(image, (self.x - image.get_width()//2, self.y - image.get_height()//2))
 
-    # INCORPORATE CODE FOR PAWN PROMOTION
-    def promotion(self):
-        print("farts")
-
-
     # CREATE A DRAW PAWN OPTIONS FUNCTION IN BOARD, AND JUST BRING BACK A LIST OF COORDINATES THAT ARE AVAILABLE FOR MOVING TO GAME SO YOU CAN CHECK FOR CHECKS TO ENSURE ITS A
     # VALID MOVE AND POP OUT ANY MOVES THAT CAUSE A CHECK
     # CHECK FOR WHEN YOUR OWN PIECE IS IN THE WAY, AND TRAIL STOPS WHEN YOU MEET OPPONENT PIECE, AND IF INDEX OUT OF RANGE OF BOARD
@@ -84,7 +79,7 @@ class Piece:
         if(self.row+direction >= 0 and self.row+direction < 8 and self.col-1 >= 0):
             row, col = self.row+direction, self.col-1
             if(state[row][col]):
-                if(state[row][col].colour != state[self.row][self.col]):
+                if(state[row][col].colour != state[self.row][self.col].colour):
                     if(erase):
                         board.draw_selected_piece(row, col, self.win, GREY if (row + col) % 2 == 0 else GREEN, state)
                     avail_moves.append((row, col))
@@ -93,7 +88,7 @@ class Piece:
         if(self.row+direction >= 0 and self.row+direction < 8 and self.col+1 < 8):
             row, col = self.row+direction, self.col+1
             if(state[row][col]):
-                if(state[row][col].colour != state[self.row][self.col]):
+                if(state[row][col].colour != state[self.row][self.col].colour):
                     if(erase):
                         board.draw_selected_piece(row, col, self.win, GREY if (row + col) % 2 == 0 else GREEN, state)
                     avail_moves.append((row, col))
@@ -480,8 +475,6 @@ class Piece:
                 if(erase):
                     board.draw_square(self.row+1, self.col+1, win, GREY if (self.row+1 + self.col+1) % 2 == 0 else GREEN)
                 avail_moves.append((self.row+1, self.col+1))
-
-
 
         return avail_moves
 

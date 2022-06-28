@@ -9,7 +9,7 @@ class Board:
 
     def draw_square(self, row, col, win, colour):
         pygame.draw.rect(win, colour, (col*SQUARE, row*SQUARE, SQUARE, SQUARE))
-        pygame.draw.rect(win, NAVY, (col*SQUARE, row*SQUARE, SQUARE, SQUARE), 2) # borders/padding
+        pygame.draw.rect(win, NAVY, (col*SQUARE, row*SQUARE, SQUARE, SQUARE), 1) # borders/padding
 
     def draw_new_board(self, win, state):
         win.fill(GREEN)
@@ -17,7 +17,7 @@ class Board:
             for col in range(COL):
                 if(not (row + col) % 2):
                     pygame.draw.rect(win, GREY, (row*SQUARE, col*SQUARE, SQUARE, SQUARE))
-                pygame.draw.rect(win, NAVY, (row*SQUARE, col*SQUARE, SQUARE, SQUARE), 2) # borders/padding
+                pygame.draw.rect(win, NAVY, (row*SQUARE, col*SQUARE, SQUARE, SQUARE), 1) # borders/padding
 
     def new_board(self, win, state):
         self.draw_new_board(win, state)
