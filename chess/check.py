@@ -11,11 +11,11 @@ class Check:
     def __init__(self, state):
         self.checkmate = False
         self.check = False
+        self.black_check, self.white_check = False, False
         self.winner = None
         self.__setup(state)
         
     def __setup(self, state):
-        #self.white_king, self.black_king = state[0][4], state[7][4]
         # black king then white king in array
         self.king = [state[7][4], state[0][4]]
 
@@ -395,10 +395,11 @@ class Check:
         self.x_dir, self.y_dir = None, None
 
     # check if the move puts the king in check (what about somewhere the king cannot go???)
-    def check_legal(self, state, turn, hue):
+    def _check_check(self, state, row, col, hue):
+        # row and col are position of the opponent king
+
         # check for pawn attacks
-        row, col = self.king[hue].row, self.king[hue].col # opponent king
-        if(turn == WHITE):
+        if(self.king[hue].colour != WHITE): # opponent king vs pawn
             pawn_dir = 1
         else:
             pawn_dir = -1
@@ -515,15 +516,59 @@ class Check:
 
         return False
 
+    # check for king's legal moves, remove any moves
+    def check_legal_king(self, state, turn, available_moves):
+        if(self.king[0].colour == turn):
+            hue = 0
+        else:
+            hue = 1
+
+        row, col = self.king[hue].row, self.king[hue].col
+        colour = self.king[hue].colour
+
+        # remove any move that causes a check (checking the kings possibilities clockwise order)
+        if(row-1 >= 0 and col-1 >= 0 and not (state[row-1][col-1] and state[row-1][col-1].colour == colour)): #NW
+            if(self._check_check(state, row-1, col-1, hue)):
+                available_moves.remove((row-1, col-1))
+        if(row-1 >= 0 and not (state[row-1][col] and state[row-1][col].colour == colour)): # N
+            if(self._check_check(state, row-1, col, hue)):
+                available_moves.remove((row-1, col))
+        if(row-1 >= 0 and col+1 < 8 and not (state[row-1][col+1] and state[row-1][col+1].colour == colour)): # NE
+            if(self._check_check(state, row-1, col+1, hue)):
+                available_moves.remove((row-1, col+1))
+        if(col+1 < 8 and not (state[row][col+1] and state[row][col+1].colour == colour)): # E
+            if(self._check_check(state, row, col+1, hue)):
+                available_moves.remove((row, col+1))
+        if(row+1 < 8 and col+1 < 8 and not (state[row+1][col+1] and state[row+1][col+1].colour == colour)): # SE
+            if(self._check_check(state, row+1, col+1, hue)):
+                available_moves.remove((row+1, col+1))
+        if(row+1 < 8 and not (state[row+1][col] and state[row+1][col].colour == colour)): # S
+            if(self._check_check(state, row+1, col, hue)):
+                available_moves.remove((row+1, col))
+        if(row+1 < 8 and col-1 >= 0 and not (state[row+1][col-1] and state[row+1][col-1].colour == colour)): # SW
+            if(self._check_check(state, row+1, col-1, hue)):
+                available_moves.remove((row+1, col-1))
+        if(col-1 >= 0 and not (state[row][col-1] and state[row][col-1].colour == colour)): # W
+            if(self._check_check(state, row, col-1, hue)):
+                available_moves.remove((row, col-1))
+
     def check_check(self, state, turn):
         if(turn == self.king[1].colour): # WHITE PIECE
             hue = 0 # BLACK KING
         else: # BLACK PIECE
             hue = 1 # WHITE KING
+
+        # NEXT MOVE MUST PROTECT KING IF self.check == True, remove any moves that don't protect the king somehow
+        # put in a while loop and don't exit unless put out of check? nahhh, you already have a good system in Game, just remove any moves that don't help
+        # if(self.check):
+        #     self.black_check, self.white_check = False, False
         
-        self.check = self.check_legal(state, turn, hue)
+        self.check = self._check_check(state, self.king[hue].row, self.king[hue].col, hue)
         if(self.check):
-            print("CHECK!")
+            if(self.king[hue].colour == WHITE):
+                self.white_check = True
+            if(self.king[hue].colour == BLACK):
+                self.black_check = True
         # call this function in Game when a piece is moved (successful_turn)
         # the move puts the opponent's king in check, this should be called after playing
         # need to check if your moved piece OR any other piece that was blocked by the moved piece is able to take the king (must check every piece on the board)
