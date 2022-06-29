@@ -384,7 +384,7 @@ class Check:
 
     # check if the move puts the king in check
     # returns the threat's position
-    def _check_check(self, state, row, col, hue, runaway_king):
+    def check_for_check(self, state, row, col, hue, runaway_king):
         # row and col are position of the opponent king
 
         # check for pawn attacks
@@ -539,28 +539,28 @@ class Check:
 
         # remove any move that causes a check (checking the kings possibilities clockwise order)
         if(row-1 >= 0 and col-1 >= 0 and not (state[row-1][col-1] and state[row-1][col-1].colour == colour)): #NW
-            if(self._check_check(state, row-1, col-1, hue, runaway_king) and (row-1, col-1) in available_moves):
+            if(self.check_for_check(state, row-1, col-1, hue, runaway_king) and (row-1, col-1) in available_moves):
                 available_moves.remove((row-1, col-1))
         if(row-1 >= 0 and not (state[row-1][col] and state[row-1][col].colour == colour)): # N
-            if(self._check_check(state, row-1, col, hue, runaway_king) and (row-1, col) in available_moves):
+            if(self.check_for_check(state, row-1, col, hue, runaway_king) and (row-1, col) in available_moves):
                 available_moves.remove((row-1, col))
         if(row-1 >= 0 and col+1 < 8 and not (state[row-1][col+1] and state[row-1][col+1].colour == colour)): # NE
-            if(self._check_check(state, row-1, col+1, hue, runaway_king) and (row-1, col+1) in available_moves):
+            if(self.check_for_check(state, row-1, col+1, hue, runaway_king) and (row-1, col+1) in available_moves):
                 available_moves.remove((row-1, col+1))
         if(col+1 < 8 and not (state[row][col+1] and state[row][col+1].colour == colour)): # E
-            if(self._check_check(state, row, col+1, hue, runaway_king) and (row, col+1) in available_moves):
+            if(self.check_for_check(state, row, col+1, hue, runaway_king) and (row, col+1) in available_moves):
                 available_moves.remove((row, col+1))
         if(row+1 < 8 and col+1 < 8 and not (state[row+1][col+1] and state[row+1][col+1].colour == colour)): # SE
-            if(self._check_check(state, row+1, col+1, hue, runaway_king) and (row+1, col+1) in available_moves):
+            if(self.check_for_check(state, row+1, col+1, hue, runaway_king) and (row+1, col+1) in available_moves):
                 available_moves.remove((row+1, col+1))
         if(row+1 < 8 and not (state[row+1][col] and state[row+1][col].colour == colour)): # S
-            if(self._check_check(state, row+1, col, hue, runaway_king) and (row+1, col) in available_moves):
+            if(self.check_for_check(state, row+1, col, hue, runaway_king) and (row+1, col) in available_moves):
                 available_moves.remove((row+1, col))
         if(row+1 < 8 and col-1 >= 0 and not (state[row+1][col-1] and state[row+1][col-1].colour == colour)): # SW
-            if(self._check_check(state, row+1, col-1, hue, runaway_king) and (row+1, col-1) in available_moves):
+            if(self.check_for_check(state, row+1, col-1, hue, runaway_king) and (row+1, col-1) in available_moves):
                 available_moves.remove((row+1, col-1))
         if(col-1 >= 0 and not (state[row][col-1] and state[row][col-1].colour == colour)): # W
-            if(self._check_check(state, row, col-1, hue, runaway_king) and (row, col-1) in available_moves):
+            if(self.check_for_check(state, row, col-1, hue, runaway_king) and (row, col-1) in available_moves):
                 available_moves.remove((row, col-1))
 
         self.opponent_king_threat(state, available_moves)
@@ -604,7 +604,7 @@ class Check:
         else: # BLACK PIECE
             hue = 1 # WHITE KING
         
-        self.check = self._check_check(state, self.king[hue].row, self.king[hue].col, hue, False)
+        self.check = self.check_for_check(state, self.king[hue].row, self.king[hue].col, hue, False)
         if(self.check):
             if(self.king[hue].colour == WHITE):
                 self.white_check = True
@@ -627,7 +627,7 @@ class Check:
             bishop_pin = self.get_bishop_pin(state, row, col, turn, hue)
             rook_pin = self.get_rook_pin(state, row, col, turn, hue)
             if(not (bishop_pin and rook_pin)):
-                threat = self._check_check(state, self.king[hue].row, self.king[hue].col, hue, False) # this time, from king's perspective, see who's attacking you
+                threat = self.check_for_check(state, self.king[hue].row, self.king[hue].col, hue, False) # this time, from king's perspective, see who's attacking you
                 # only called if in check already, thus, threat will not equal None
                 if(state[threat[0]][threat[1]].name != 'N' and state[threat[0]][threat[1]].name != 'P'): # cannot block if the threat is a knight, must capture it or move king. If it's a pawn, you can't really block
                     if(len(available_moves) > 0):

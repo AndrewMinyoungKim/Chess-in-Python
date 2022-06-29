@@ -45,9 +45,11 @@ class Game:
     def check_promotion(self, row, col):
         if(self.state[row][col].name == 'P'):
             if(self.state[row][col].colour == BLACK and row == 0):
-                self.special_moves.promotion(self.state, row, col)
+                self.state[row][col].name = self.special_moves.promotion(row, col)
+                self.board.draw_selected_piece(row, col, self.win, GREY if (self.selected_x + self.selected_y) % 2 == 0 else GREEN, self.state)
             elif(self.state[row][col].colour == WHITE and row == 7):
-                self.special_moves.promotion(self.state, row, col)
+                self.state[row][col].name = self.special_moves.promotion(row, col)
+                self.board.draw_selected_piece(row, col, self.win, GREY if (self.selected_x + self.selected_y) % 2 == 0 else GREEN, self.state)
 
     def colour_king_in_check(self, colour):
         if(self.check.black_check):
@@ -61,6 +63,17 @@ class Game:
         self.board.draw_selected_piece(self.selected_x, self.selected_y, self.win, GREY if (self.selected_x + self.selected_y) % 2 == 0 else GREEN, self.state)
         erase = True
         self.state[self.selected_x][self.selected_y].movement(erase, self.board, self.state, self.win) # erase := True requires Python 3.8 or newer
+        if(self.special_moves.white_castle and self.turn == WHITE and self.state[self.selected_x][self.selected_y].name == 'K'):
+            if((0, 6) in self.available_moves):
+                self.board.draw_square(0, 6, self.win, GREY if 6 % 2 == 0 else GREEN)
+            if((0, 2) in self.available_moves):
+                self.board.draw_square(0, 2, self.win, GREY if 2 % 2 == 0 else GREEN)
+        if(self.special_moves.black_castle and self.turn == BLACK and self.state[self.selected_x][self.selected_y].name == 'K'):
+            if((7, 6) in self.available_moves):
+                self.board.draw_square(7, 6, self.win, GREY if (7+6) % 2 == 0 else GREEN)
+            if((7, 2) in self.available_moves):
+                self.board.draw_square(7, 2, self.win, GREY if (7+2) % 2 == 0 else GREEN)
+
         if(self.check.check):
             self.colour_king_in_check(RED)
 
@@ -87,6 +100,20 @@ class Game:
             self.state[row][col] = 0
             del(taken_piece)
             gc.collect()
+        # castle, (will never happen with an attack, elif used to speed up program logic)
+        elif(self.state[self.selected_x][self.selected_y].name == 'K' and abs(self.selected_y-col) > 1):
+            # all row values will be the same in a castle
+            if(col == 2):
+                rook_start_col = 0
+                rook_new_col = 3
+            elif(col == 6):
+                rook_start_col = 7
+                rook_new_col = 5
+            self.state[row][rook_start_col], self.state[row][rook_new_col] = self.state[row][rook_new_col], self.state[row][rook_start_col]
+            self.state[row][rook_new_col].col = rook_new_col
+            self.state[row][rook_new_col].calc_pos()
+            self.board.draw_square(row, rook_start_col, self.win, GREY if (row + rook_start_col) % 2 == 0 else GREEN)
+            self.board.draw_selected_piece(row, rook_new_col, self.win, GREY if (row + rook_new_col) % 2 == 0 else GREEN, self.state)
 
         self.state[self.selected_x][self.selected_y], self.state[row][col] = self.state[row][col], self.state[self.selected_x][self.selected_y]
         self.state[row][col].row = row
@@ -108,15 +135,17 @@ class Game:
             self.check.check_pin(self.state, row, col, self.available_moves, self.turn)
         elif(not self.check.check):
             self.check.check_legal_king(self.state, self.turn, self.available_moves)
+            self.special_moves.check_castle(self.state, self.turn, self.check, self.available_moves)
         
         if(self.check.check):
             self.check.save_king(self.state, row, col, self.available_moves, self.turn)
 
         self.display_available_moves()
 
-    def perform_move_select(self, row, col, attack):
+    def process_move(self, row, col, attack):
         self.erase_coloured_boxes()
         successful_turn = self.perform_move(row, col, attack)
+
         self.check_promotion(row, col)
 
         # recover from being in check
@@ -129,7 +158,55 @@ class Game:
             print("CHECK!")
             self.colour_king_in_check(RED)
 
+        # check for lost ability to castle
+        # black castles
+        if(self.special_moves.black_castle and self.turn == BLACK and (self.state[row][col].name == 'K' or self.state[row][col].name == 'R')):
+            if(self.state[row][col].name == 'K'):
+                self.special_moves.black_castle = False
+                self.special_moves.black_kingside_castle, self.special_moves.black_queenside_castle = False, False
+            else:
+                if(self.selected_y == 0):
+                    self.special_moves.black_queenside_castle = False
+                else:
+                    self.special_moves.black_kingside_castle = False
+
+                if(not (self.special_moves.black_queenside_castle and self.special_moves.black_kingside_castle)):
+                    self.special_moves.black_castle = False
+        # white castles
+        elif(self.special_moves.white_castle and self.turn == WHITE and (self.state[row][col].name == 'K' or self.state[row][col].name == 'R')):
+            if(self.state[row][col].name == 'K'):
+                self.special_moves.white_castle = False
+                self.special_moves.white_kingside_castle, self.special_moves.white_queenside_castle = False, False
+            else:
+                if(self.selected_y == 0):
+                    self.special_moves.white_queenside_castle = False
+                else:
+                    self.special_moves.white_kingside_castle = False
+
+                if(not (self.special_moves.white_queenside_castle and self.special_moves.white_kingside_castle)):
+                    self.special_moves.white_castle = False
+
+        # lost castle ability due to rook taken
+        if(self.special_moves.black_castle and row == 7 and (col == 0 or col == 7) and self.state[row][col].colour != BLACK):
+            if(col == 0):
+                self.special_moves.black_queenside_castle = False
+            else:
+                self.special_moves.black_kingside_castle = False
+            
+            if(not self.special_moves.black_queenside_castle and not self.special_moves.black_kingside_castle):
+                self.special_moves.black_castle = False
+
+        if(self.special_moves.white_castle and row == 0 and (col == 0 or col == 7) and self.state[row][col].colour != WHITE):
+            if(col == 0):
+                self.special_moves.white_queenside_castle = False
+            else:
+                self.special_moves.white_kingside_castle = False
+            
+            if(not self.special_moves.white_queenside_castle and not self.special_moves.white_kingside_castle):
+                self.special_moves.white_castle = False
+        
         self.reset_selected_moves()
+
         return successful_turn
 
     def mouseclick(self, row, col):
@@ -147,17 +224,19 @@ class Game:
 
             # moving to an empty space
             if(not self.state[row][col] and (row, col) in self.available_moves):
-                successful_turn = self.perform_move_select(row, col, False) # attack := False
+                successful_turn = self.process_move(row, col, False) # attack := False
 
             # capturing another piece
             elif(self.state[row][col] and (row, col) in self.available_moves):
-                successful_turn = self.perform_move_select(row, col, True) # attack := True
+                successful_turn = self.process_move(row, col, True) # attack := True
                 
+                # decrement number of pieces on the board for captured side
                 if(self.turn == WHITE):
                     self.num_black_pieces -= 1
                 elif(self.turn == BLACK):
                     self.num_white_pieces -= 1
                 
+                # stalemate from only 2 kings on the board
                 if(self.num_black_pieces == 1 and self.num_white_pieces == 1):
                     self.stalemate = True
                     self.__game_over()
