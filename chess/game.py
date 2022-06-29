@@ -93,15 +93,49 @@ class Game:
         del(self.available_moves)
         self.available_moves = self.state[row][col].movement(erase, self.board, self.state, self.win) # erase := False requires Python 3.8 or newer
 
+    def switch_places(self, old_row, old_col, new_row, new_col):
+        self.state[old_row][old_col], self.state[new_row][new_col] = self.state[new_row][new_col], self.state[old_row][old_col]
+        self.state[new_row][new_col].row = new_row
+        self.state[new_row][new_col].col = new_col
+        self.state[new_row][new_col].calc_pos()
+        self.board.draw_square(old_row, old_col, self.win, GREY if (old_row + old_col) % 2 == 0 else GREEN)
+        self.board.draw_selected_piece(new_row, new_col, self.win, GREY if (new_row + new_col) % 2 == 0 else GREEN, self.state)
+
+    def take_piece(self, row, col):
+        taken_piece = self.state[row][col]
+        self.state[row][col] = 0
+        del(taken_piece)
+        gc.collect()
+
     def perform_move(self, row, col, attack):
         #make the switch, delete the opponent piece in square if(attack == True)
         if(attack):
-            taken_piece = self.state[row][col]
-            self.state[row][col] = 0
-            del(taken_piece)
-            gc.collect()
-        # castle, (will never happen with an attack, elif used to speed up program logic)
-        elif(self.state[self.selected_x][self.selected_y].name == 'K' and abs(self.selected_y-col) > 1):
+            self.take_piece(row, col)
+        
+        # disables en_passant next turn after en passant is enabled
+        if(self.special_moves.en_passant):
+            if((row, col) == (self.special_moves.row_en_passant, self.special_moves.col_en_passant) and self.state[self.selected_x][self.selected_y].name == 'P' and self.state[self.selected_x][self.selected_y].colour == self.turn):
+                if(self.turn == WHITE):
+                    en_passant_victim_row = self.special_moves.row_en_passant - 1 # == 4
+                else:
+                    en_passant_victim_row = self.special_moves.row_en_passant + 1 # == 3
+                self.take_piece(en_passant_victim_row, col)
+                self.board.draw_square(en_passant_victim_row, col, self.win, GREY if (en_passant_victim_row + col) % 2 == 0 else GREEN)
+                    
+            self.special_moves.en_passant = False
+            self.special_moves.row_en_passant, self.special_moves.col_en_passant = None, None
+
+        # enables en passant chance if pawn moves up two squares
+        if(self.state[self.selected_x][self.selected_y].name == 'P' and abs(row-self.selected_x) == 2):
+            self.special_moves.en_passant = True
+            self.special_moves.col_en_passant = col
+            if(self.turn == WHITE):
+                self.special_moves.row_en_passant = row - 1 # == 2
+            else:
+                self.special_moves.row_en_passant = row + 1 # == 5
+
+        # castle
+        if(self.state[self.selected_x][self.selected_y].name == 'K' and abs(self.selected_y-col) > 1):
             # all row values will be the same in a castle
             if(col == 2):
                 rook_start_col = 0
@@ -109,18 +143,10 @@ class Game:
             elif(col == 6):
                 rook_start_col = 7
                 rook_new_col = 5
-            self.state[row][rook_start_col], self.state[row][rook_new_col] = self.state[row][rook_new_col], self.state[row][rook_start_col]
-            self.state[row][rook_new_col].col = rook_new_col
-            self.state[row][rook_new_col].calc_pos()
-            self.board.draw_square(row, rook_start_col, self.win, GREY if (row + rook_start_col) % 2 == 0 else GREEN)
-            self.board.draw_selected_piece(row, rook_new_col, self.win, GREY if (row + rook_new_col) % 2 == 0 else GREEN, self.state)
 
-        self.state[self.selected_x][self.selected_y], self.state[row][col] = self.state[row][col], self.state[self.selected_x][self.selected_y]
-        self.state[row][col].row = row
-        self.state[row][col].col = col
-        self.state[row][col].calc_pos()
-        self.board.draw_square(self.selected_x, self.selected_y, self.win, GREY if (self.selected_x + self.selected_y) % 2 == 0 else GREEN)
-        self.board.draw_selected_piece(row, col, self.win, GREY if (row + col) % 2 == 0 else GREEN, self.state)
+            self.switch_places(row, rook_start_col, row, rook_new_col)
+
+        self.switch_places(self.selected_x, self.selected_y, row, col)
         return True
 
     def reset_selected_moves(self):
@@ -130,7 +156,15 @@ class Game:
 
     def move_select(self, row, col):
         self.select_piece(row, col)
-        #check for castle if king (and unmoved rook in clear rank) or check for en passant for pawn (need to memorize previous move, maybe use a variable to signify a pawn moved two squares)
+
+        if(self.special_moves.en_passant and self.state[row][col].name == 'P'):
+            if(self.turn == WHITE):
+                en_passant_row = self.special_moves.row_en_passant - 1 # == 4
+            else:
+                en_passant_row = self.special_moves.row_en_passant + 1 # == 3
+            if(row == en_passant_row and abs(col-self.special_moves.col_en_passant) == 1):
+                self.available_moves.append((self.special_moves.row_en_passant,self.special_moves.col_en_passant))
+        
         if(self.state[row][col].name != 'K'):
             self.check.check_pin(self.state, row, col, self.available_moves, self.turn)
         elif(not self.check.check):

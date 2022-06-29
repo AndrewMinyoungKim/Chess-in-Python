@@ -15,13 +15,9 @@ class SpecialMoves:
 
         self.en_passant = False
         self.row_en_passant, self.col_en_passant = None, None
-        self.en_passant_piece = None
-
-        # definitions for threefold_repetition can get a little confusing and overcomplicated
-        # for convenience sake as it is very rare and this is more so for the gameplay than this, which is not as exciting, we define this as:
-        # if the board claims the same position after 3 turns of one player and 2 turns of the other player, then threefold repetition
-        # since the gameplay is most important to showcase, not this lamer rule, we will not add threefold repetition to this chess python game
-        self.threefold_repetition = False # do not set
+        # definitions for threefold repetition can get a little confusing and overcomplicated and differ among different chess games
+        # for convenience sake, as this is more so for showcasing the gameplay than this little unexciting rule and corner case
+        # we will not add threefold repetition to this chess python game. threefold_repetition is NOT set!
 
     def check_castle(self, state, colour, check, available_moves):
         if(colour == BLACK and not self.black_castle):
@@ -64,11 +60,3 @@ class SpecialMoves:
                 return promotion_input.upper()
             else:
                 promotion_input = input("Please enter a letter in the parantheses: Queen (Q), Rook (R), Bishop (B) or Knight (N): ")
-
-    def enpassant_chance(self, state, row, col):
-        self.en_passant = True
-        self.en_passant_piece = state[row][col]
-
-    def remove_enpassant(self):
-        self.en_passant = False
-        self.en_passant_piece = None
