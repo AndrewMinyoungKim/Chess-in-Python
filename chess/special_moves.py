@@ -17,7 +17,11 @@ class SpecialMoves:
         self.row_en_passant, self.col_en_passant = None, None
         self.en_passant_piece = None
 
-        self.repetition = False
+        # definitions for threefold_repetition can get a little confusing and overcomplicated
+        # for convenience sake as it is very rare and this is more so for the gameplay than this, which is not as exciting, we define this as:
+        # if the board claims the same position after 3 turns of one player and 2 turns of the other player, then threefold repetition
+        # since the gameplay is most important to showcase, not this lamer rule, we will not add threefold repetition to this chess python game
+        self.threefold_repetition = False # do not set
 
     def check_castle(self, state, colour, check, available_moves):
         if(colour == BLACK and not self.black_castle):
