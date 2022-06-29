@@ -20,11 +20,13 @@ class Piece:
         self.draw_piece(self.win)
 
     def __del__(self):
-        # print(self.colour_word, self.name, "taken")
-        # print("The {0} {1} has been captured".format(self.colour_word, self.name))
-        # print("The {} {} has been captured".format(self.colour_word, self.name))
         if(not game_over):
-            print("The {colour} {piece} has been captured".format(colour = self.colour_word, piece = self.name))
+            # different convenient ways to print a message with variables
+            # print(self.colour_word, self.name, "taken")
+            # print("The {0} {1} has been captured".format(self.colour_word, self.name))
+            # print("The {} {} has been captured".format(self.colour_word, self.name))
+            # print("The {colour} {piece} has been captured".format(colour = self.colour_word, piece = self.name))
+            print(f"The {self.colour_word} {self.name} has been captured") # most convenient way imo, "f-strings"
 
     def calc_pos(self):
         self.x = SQUARE * self.col + SQUARE // 2
@@ -41,9 +43,6 @@ class Piece:
         image = pygame.transform.scale(pygame.image.load(png_image_path), (SQUARE, SQUARE))
         win.blit(image, (self.x - image.get_width()//2, self.y - image.get_height()//2))
 
-    # CREATE A DRAW PAWN OPTIONS FUNCTION IN BOARD, AND JUST BRING BACK A LIST OF COORDINATES THAT ARE AVAILABLE FOR MOVING TO GAME SO YOU CAN CHECK FOR CHECKS TO ENSURE ITS A
-    # VALID MOVE AND POP OUT ANY MOVES THAT CAUSE A CHECK
-    # CHECK FOR WHEN YOUR OWN PIECE IS IN THE WAY, AND TRAIL STOPS WHEN YOU MEET OPPONENT PIECE, AND IF INDEX OUT OF RANGE OF BOARD
     def pawn_movement(self, erase, board, state, win):
         avail_moves = []
 
@@ -276,16 +275,10 @@ class Piece:
         return avail_moves
 
     # rook movement
-    #CHECK FOR CHECKS
     def rook_movement(self, erase, board, state, win):
         avail_moves = []
         row, col = self.row, self.col
-
-        #CHECK FOR CHECKS
-        # ADD TO LIST AVAILBLE MOVES AND RETURN TO GAME AND CALL BOARD FUNCTIONS FROM THERE
-
-
-
+        
         # file movement
         # up
         row = self.row - 1
@@ -366,11 +359,8 @@ class Piece:
     def king_movement(self, erase, board, state, win):
         avail_moves = []
         left, right, up, down = False, False, False, False
-
-        #LOOK FOR CASTLE OPTION, AFTER FIRST KING MOVE, SET CASTLE TO FALSE
-        #LOOK FOR CHECKS AND WHAT'S UNAVAILABLE
-
-        # each direction
+        
+        # straight file and rank
         if(self.row-1 >= 0):
             left = True
             if(state[self.row-1][self.col]):
@@ -480,7 +470,6 @@ class Piece:
         return avail_moves
 
     # movement of each piece
-    # need to consider check! and mate!
     def movement(self, erase, board, state, win):
         #white_piece = WHITE if self.colour == WHITE else BLACK
         if(self.name == 'P'):

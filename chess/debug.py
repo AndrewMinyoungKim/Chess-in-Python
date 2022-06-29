@@ -11,6 +11,7 @@ class Debugger():
                 else:
                     print(f"{i}, {j}: {state[i][j]}")
 
+    # print the piece object's information
     def print_piece(self, piece):
         print(f"Name: {piece.name}")
         print(f"Row: {piece.row}")

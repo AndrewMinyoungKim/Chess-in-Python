@@ -1,4 +1,3 @@
-from unittest import result
 import pygame
 import gc
 
@@ -7,6 +6,7 @@ from .board import Board
 from .piece import Piece
 from .special_moves import SpecialMoves
 from .check import Check
+from .notation import Notation
 from .debug import Debugger
 
 class Game:
@@ -14,10 +14,6 @@ class Game:
         self.win = win
         self.state = []
         self._init(self.win, self.state)
-
-        #stalemate if all pieces are gone except the two kings
-        #all_pieces = dict(w_num_P = 8, w_num_N = 2, w_num_B = 2, w_num_R = 2, w_num_Q = 1, b_num_P = 8, b_num_N = 2, b_num_B = 2, b_num_R = 2, b_num_Q = 1)
-        self.num_black_pieces, self.num_white_pieces = 16, 16
 
     def _init(self, win, state):
         self.turn = WHITE
@@ -28,14 +24,15 @@ class Game:
         self.selected_x, self.selected_y = None, None
 
         self.available_moves = []
-
-        # check for legal castles, promotions, en passants
+        # check for castles, promotions, en passants
         self.special_moves = SpecialMoves()
+        self.display_notation = Notation()
 
         # check for legal moves, any checks, and checkmates
         self.check = Check(state)
-
         self.checkmate, self.stalemate = False, False
+        #stalemate if all pieces are gone except the two kings
+        self.num_black_pieces, self.num_white_pieces = 16, 16
 
         self.debug = Debugger()
 
@@ -59,10 +56,11 @@ class Game:
         self.board.draw_selected_piece(self.check.king[hue].row, self.check.king[hue].col, self.win, colour, self.state)
 
     def erase_coloured_boxes(self):
-        #erase previously coloured boxes
         self.board.draw_selected_piece(self.selected_x, self.selected_y, self.win, GREY if (self.selected_x + self.selected_y) % 2 == 0 else GREEN, self.state)
         erase = True
         self.state[self.selected_x][self.selected_y].movement(erase, self.board, self.state, self.win) # erase := True requires Python 3.8 or newer
+        
+        #erase castle option boxes
         if(self.special_moves.white_castle and self.turn == WHITE and self.state[self.selected_x][self.selected_y].name == 'K'):
             if((0, 6) in self.available_moves):
                 self.board.draw_square(0, 6, self.win, GREY if 6 % 2 == 0 else GREEN)
@@ -108,13 +106,14 @@ class Game:
         gc.collect()
 
     def perform_move(self, row, col, attack):
-        #make the switch, delete the opponent piece in square if(attack == True)
+        # delete the opponent piece in square if(attack == True)
         if(attack):
             self.take_piece(row, col)
         
         # disables en_passant next turn after en passant is enabled
         if(self.special_moves.en_passant):
             if((row, col) == (self.special_moves.row_en_passant, self.special_moves.col_en_passant) and self.state[self.selected_x][self.selected_y].name == 'P' and self.state[self.selected_x][self.selected_y].colour == self.turn):
+                # remove piece and erase victim pawn square
                 if(self.turn == WHITE):
                     en_passant_victim_row = self.special_moves.row_en_passant - 1 # == 4
                 else:
@@ -143,9 +142,10 @@ class Game:
             elif(col == 6):
                 rook_start_col = 7
                 rook_new_col = 5
-
+            # move the rook in castle
             self.switch_places(row, rook_start_col, row, rook_new_col)
 
+        # make the switch
         self.switch_places(self.selected_x, self.selected_y, row, col)
         return True
 
@@ -193,7 +193,6 @@ class Game:
             self.colour_king_in_check(RED)
 
         # check for lost ability to castle
-        # black castles
         if(self.special_moves.black_castle and self.turn == BLACK and (self.state[row][col].name == 'K' or self.state[row][col].name == 'R')):
             if(self.state[row][col].name == 'K'):
                 self.special_moves.black_castle = False
@@ -206,7 +205,7 @@ class Game:
 
                 if(not (self.special_moves.black_queenside_castle and self.special_moves.black_kingside_castle)):
                     self.special_moves.black_castle = False
-        # white castles
+        
         elif(self.special_moves.white_castle and self.turn == WHITE and (self.state[row][col].name == 'K' or self.state[row][col].name == 'R')):
             if(self.state[row][col].name == 'K'):
                 self.special_moves.white_castle = False
@@ -240,7 +239,6 @@ class Game:
                 self.special_moves.white_castle = False
         
         self.reset_selected_moves()
-
         return successful_turn
 
     def mouseclick(self, row, col):
@@ -292,33 +290,16 @@ class Game:
             if(successful_turn):
                 if(self.turn == WHITE):
                     self.turn = BLACK
-                    self.display_move(row, col)
-                    #print("Black's Turn")
-
-                    # if no moves available for player, check if any move available anywhere, if not, checkmate or stalemate
-                    self._detect_checkmate()
+                    self.display_notation.display_move(self.state, row, col, "Black") # colour := "Black"
 
                 else:
                     self.turn = WHITE
-                    self.display_move(row, col)
-                    #print("White's Turn")
+                    self.display_notation.display_move(self.state, row, col, "White") # colour := "White"
 
-                    # if no moves available for player, check if any move available anywhere, if not, checkmate or stalemate
-                    self._detect_checkmate()
+                # if no moves available for player, check if any move available anywhere, if not, checkmate or stalemate
+                self._detect_checkmate()
 
         return (self.checkmate or self.stalemate)
-    
-    #display move that was made
-    def display_move(self, row, col):
-        # IMPORTANT NOTE: When reading, the file letter comes first and THEN the rank number (e.g. d4), so it reads as Column THEN Row
-        if(self.state[row][col].name == 'P'):
-            print("{}{}".format(FILE[col], row+1))
-        else:
-            print("{}{}{}".format(self.state[row][col].name, FILE[col], row+1))
-
-            #need to implement rest of notation for checks, checkmates, captures, castles, etc.
-            
-            #need to check for if check occurs due to move
 
     def recover_from_check(self):
         if(self.check.white_check): hue = 1
@@ -328,15 +309,15 @@ class Game:
 
     def _detect_checkmate(self):
         if(self.turn == WHITE):
-            result = self.check.check_checkmate(self.state, self.turn, self.num_white_pieces, self.board, self.win)
+            verdict = self.check.check_checkmate(self.state, self.turn, self.num_white_pieces, self.board, self.win)
         else:
-            result = self.check.check_checkmate(self.state, self.turn, self.num_black_pieces, self.board, self.win)
+            verdict = self.check.check_checkmate(self.state, self.turn, self.num_black_pieces, self.board, self.win)
 
-        if(result):
-            if(result == "Checkmate"):
+        if(verdict):
+            if(verdict == "Checkmate"):
                 self.checkmate = True
                 self.__game_over()
-            elif(result == "Stalemate"):
+            elif(verdict == "Stalemate"):
                 self.stalemate = True
                 self.__game_over()
 
@@ -359,7 +340,5 @@ class Game:
             self.board.draw_selected_piece(self.check.king[1].row, self.check.king[1].col, self.win, BROWN, self.state)
             print("You're all losers!")
 
-        else:
-            print("Shrek Error")
-
+        print("-- Game Over --")
         game_over = True

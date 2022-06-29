@@ -5,7 +5,7 @@ from .board import Board
 from .piece import Piece
 from .debug import Debugger
 
-#check for pins, no need to worry about skewers and forks, as it doesn't pin down another piece, just causes king to become protected
+# check for pins, no need to worry about skewers and forks, as it doesn't pin down another piece, just causes king to become protected
 
 class Check:
     def __init__(self, state):
