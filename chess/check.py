@@ -661,18 +661,23 @@ class Check:
 
     def check_checkmate(self, state, turn, pieces_left, board, win):
         piece_count = 0
+        no_pieces_left = False
         save_possible = False
         for i in range(ROW):
+            if(save_possible or no_pieces_left): break
             for j in range(COL):
+                if(save_possible or no_pieces_left): break
                 if(state[i][j] and state[i][j].colour == turn):
                     piece_count += 1
                     available_moves = state[i][j].movement(False, board, state, win)
-                    self.save_king(state, i, j, available_moves, turn)
+                    if(state[i][j].name == 'K'):
+                        self.check_legal_king(state, turn, available_moves)
+                    if(self.check):
+                        self.save_king(state, i, j, available_moves, turn)
                     if(len(available_moves) > 0):
                         save_possible = True
-                        break
                     if(piece_count >= pieces_left):
-                        break
+                        no_pieces_left = True
         
         if(not save_possible):
             if(self.check):

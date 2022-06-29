@@ -46,10 +46,10 @@ class Game:
         if(self.state[row][col].name == 'P'):
             if(self.state[row][col].colour == BLACK and row == 0):
                 self.state[row][col].name = self.special_moves.promotion(row, col)
-                self.board.draw_selected_piece(row, col, self.win, GREY if (self.selected_x + self.selected_y) % 2 == 0 else GREEN, self.state)
+                self.board.draw_selected_piece(row, col, self.win, GREY if (row + col) % 2 == 0 else GREEN, self.state)
             elif(self.state[row][col].colour == WHITE and row == 7):
                 self.state[row][col].name = self.special_moves.promotion(row, col)
-                self.board.draw_selected_piece(row, col, self.win, GREY if (self.selected_x + self.selected_y) % 2 == 0 else GREEN, self.state)
+                self.board.draw_selected_piece(row, col, self.win, GREY if (row + col) % 2 == 0 else GREEN, self.state)
 
     def colour_king_in_check(self, colour):
         if(self.check.black_check):
@@ -261,9 +261,8 @@ class Game:
                     self.display_move(row, col)
                     #print("Black's Turn")
 
-                    # if no moves available for player, check if any move available anywhere
-                    if(self.check.check):
-                        self._detect_checkmate()
+                    # if no moves available for player, check if any move available anywhere, if not, checkmate or stalemate
+                    self._detect_checkmate()
 
                 else:
                     self.turn = WHITE
@@ -271,8 +270,7 @@ class Game:
                     #print("White's Turn")
 
                     # if no moves available for player, check if any move available anywhere, if not, checkmate or stalemate
-                    if(self.check.check):
-                        self._detect_checkmate()
+                    self._detect_checkmate()
 
         return (self.checkmate or self.stalemate)
     
@@ -295,7 +293,11 @@ class Game:
         self.check.king_saved(self.turn)
 
     def _detect_checkmate(self):
-        result = self.check.check_checkmate(self.state, self.turn, self.num_black_pieces, self.board, self.win)
+        if(self.turn == WHITE):
+            result = self.check.check_checkmate(self.state, self.turn, self.num_white_pieces, self.board, self.win)
+        else:
+            result = self.check.check_checkmate(self.state, self.turn, self.num_black_pieces, self.board, self.win)
+
         if(result):
             if(result == "Checkmate"):
                 self.checkmate = True
@@ -319,6 +321,8 @@ class Game:
         
         elif(self.stalemate):
             print("STALEMATE")
+            self.board.draw_selected_piece(self.check.king[0].row, self.check.king[0].col, self.win, BROWN, self.state)
+            self.board.draw_selected_piece(self.check.king[1].row, self.check.king[1].col, self.win, BROWN, self.state)
             print("You're all losers!")
 
         else:

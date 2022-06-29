@@ -11,7 +11,7 @@ BLACK = 0x000
 GREY = (240, 233, 216)
 GREEN = (110, 235, 125)
 
-ORANGE = 0xe39f46 # used for normal move display
+ORANGE = 0xf5a031 # used for normal move display
 RED = 0xed0c1b # used for check display
 GOLD = 0xFFD700 # Winning Checkmate Colour!
 BROWN = 0xDAA06D # Losing Checkmate Colour :(
