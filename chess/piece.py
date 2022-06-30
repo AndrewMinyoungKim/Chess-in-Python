@@ -20,6 +20,7 @@ class Piece:
         self.draw_piece(self.win)
 
     def __del__(self):
+        # remove this and the "game_over" variable from constants.py once notation.py is implemented & completed
         if(not game_over):
             # different convenient ways to print a message with variables
             # print(self.colour_word, self.name, "taken")

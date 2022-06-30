@@ -1,7 +1,7 @@
 import pygame
 import sys
 
-from chess.constants import WIDTH, HEIGHT, SQUARE, game_over
+from chess.constants import WIDTH, HEIGHT, SQUARE
 from chess.game import Game
 
 class Main:
@@ -27,7 +27,7 @@ class Main:
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    game_over = True
+                    print("Game exited")
                     self.done = True
                     sys.exit()
 

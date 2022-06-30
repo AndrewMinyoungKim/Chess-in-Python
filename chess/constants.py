@@ -37,8 +37,10 @@ game_over = False
 # ---
 
 # CUSTOMIZABLE BOARD COLOURS!
-# example, choose any colour codes and set them to these variables however you'd like and have fun with them :)
-# customize board colours here (uncomment the variables below to begin!):
+# choose any colour codes and set them to these variables however you'd like. Have fun with it :)
+# uncomment the variables below to begin!
+
+# customize board colours here:
 # TILE_A = (240, 233, 216)
 # TILE_B = 0x425fe3
 # MOVES = 0xf2cf66
