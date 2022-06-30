@@ -47,10 +47,10 @@ class Game:
         if(self.state[row][col].name == 'P'):
             if(self.state[row][col].colour == BLACK and row == 0):
                 self.state[row][col].name = self.special_moves.promotion(row, col)
-                self.board.draw_selected_piece(row, col, self.win, GREY if (row + col) % 2 == 0 else GREEN, self.state)
+                self.board.draw_selected_piece(row, col, self.win, TILE_A if (row + col) % 2 == 0 else TILE_B, self.state)
             elif(self.state[row][col].colour == WHITE and row == 7):
                 self.state[row][col].name = self.special_moves.promotion(row, col)
-                self.board.draw_selected_piece(row, col, self.win, GREY if (row + col) % 2 == 0 else GREEN, self.state)
+                self.board.draw_selected_piece(row, col, self.win, TILE_A if (row + col) % 2 == 0 else TILE_B, self.state)
 
     def colour_king_in_check(self, colour):
         if(self.check.black_check):
@@ -60,21 +60,21 @@ class Game:
         self.board.draw_selected_piece(self.check.king[hue].row, self.check.king[hue].col, self.win, colour, self.state)
 
     def erase_coloured_boxes(self):
-        self.board.draw_selected_piece(self.selected_x, self.selected_y, self.win, GREY if (self.selected_x + self.selected_y) % 2 == 0 else GREEN, self.state)
+        self.board.draw_selected_piece(self.selected_x, self.selected_y, self.win, TILE_A if (self.selected_x + self.selected_y) % 2 == 0 else TILE_B, self.state)
         erase = True
         self.state[self.selected_x][self.selected_y].movement(erase, self.board, self.state, self.win) # erase := True requires Python 3.8 or newer
         
         #erase castle option boxes
         if(self.special_moves.white_castle and self.turn == WHITE and self.state[self.selected_x][self.selected_y].name == 'K'):
             if((0, 6) in self.available_moves):
-                self.board.draw_square(0, 6, self.win, GREY if 6 % 2 == 0 else GREEN)
+                self.board.draw_square(0, 6, self.win, TILE_A if 6 % 2 == 0 else TILE_B)
             if((0, 2) in self.available_moves):
-                self.board.draw_square(0, 2, self.win, GREY if 2 % 2 == 0 else GREEN)
+                self.board.draw_square(0, 2, self.win, TILE_A if 2 % 2 == 0 else TILE_B)
         if(self.special_moves.black_castle and self.turn == BLACK and self.state[self.selected_x][self.selected_y].name == 'K'):
             if((7, 6) in self.available_moves):
-                self.board.draw_square(7, 6, self.win, GREY if (7+6) % 2 == 0 else GREEN)
+                self.board.draw_square(7, 6, self.win, TILE_A if (7+6) % 2 == 0 else TILE_B)
             if((7, 2) in self.available_moves):
-                self.board.draw_square(7, 2, self.win, GREY if (7+2) % 2 == 0 else GREEN)
+                self.board.draw_square(7, 2, self.win, TILE_A if (7+2) % 2 == 0 else TILE_B)
 
         if(self.check.check):
             self.colour_king_in_check(RED)
@@ -100,8 +100,8 @@ class Game:
         self.state[new_row][new_col].row = new_row
         self.state[new_row][new_col].col = new_col
         self.state[new_row][new_col].calc_pos()
-        self.board.draw_square(old_row, old_col, self.win, GREY if (old_row + old_col) % 2 == 0 else GREEN)
-        self.board.draw_selected_piece(new_row, new_col, self.win, GREY if (new_row + new_col) % 2 == 0 else GREEN, self.state)
+        self.board.draw_square(old_row, old_col, self.win, TILE_A if (old_row + old_col) % 2 == 0 else TILE_B)
+        self.board.draw_selected_piece(new_row, new_col, self.win, TILE_A if (new_row + new_col) % 2 == 0 else TILE_B, self.state)
 
     def take_piece(self, row, col):
         taken_piece = self.state[row][col]
@@ -127,7 +127,7 @@ class Game:
                     en_passant_victim_row = self.special_moves.row_en_passant + 1 # == 3
                 self.take_piece(en_passant_victim_row, col)
                 pygame.mixer.Channel(0).play(pygame.mixer.Sound('assets/capture.wav'))
-                self.board.draw_square(en_passant_victim_row, col, self.win, GREY if (en_passant_victim_row + col) % 2 == 0 else GREEN)
+                self.board.draw_square(en_passant_victim_row, col, self.win, TILE_A if (en_passant_victim_row + col) % 2 == 0 else TILE_B)
                     
             self.special_moves.en_passant = False
             self.special_moves.row_en_passant, self.special_moves.col_en_passant = None, None
@@ -320,7 +320,7 @@ class Game:
     def recover_from_check(self):
         if(self.check.white_check): hue = 1
         else: hue = 0
-        self.colour_king_in_check(GREY if (self.check.king[hue].row + self.check.king[hue].col) % 2 == 0 else GREEN)
+        self.colour_king_in_check(TILE_A if (self.check.king[hue].row + self.check.king[hue].col) % 2 == 0 else TILE_B)
         self.check.king_saved(self.turn)
 
     def _detect_checkmate(self):

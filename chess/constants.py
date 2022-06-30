@@ -7,9 +7,13 @@ SQUARE = HEIGHT//COL
 WHITE = 0xFFFFFF
 BLACK = 0x000
 
-# board colours
+# default board colours
 GREY = (240, 233, 216)
 GREEN = (110, 235, 125)
+TILE_A, TILE_B = GREY, GREEN
+# customizable board colours
+# TILE_A = (240, 233, 216)
+# TILE_B = 0x425fe3
 
 ORANGE = 0xf5a031 # used for normal move display
 RED = 0xed0c1b # used for check display

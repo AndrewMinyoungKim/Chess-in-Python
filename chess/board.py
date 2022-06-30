@@ -12,11 +12,11 @@ class Board:
         pygame.draw.rect(win, NAVY, (col*SQUARE, row*SQUARE, SQUARE, SQUARE), 1) # borders/padding
 
     def draw_new_board(self, win, state):
-        win.fill(GREEN)
+        win.fill(TILE_B)
         for row in range(ROW):
             for col in range(COL):
                 if(not (row + col) % 2):
-                    pygame.draw.rect(win, GREY, (row*SQUARE, col*SQUARE, SQUARE, SQUARE))
+                    pygame.draw.rect(win, TILE_A, (row*SQUARE, col*SQUARE, SQUARE, SQUARE))
                 pygame.draw.rect(win, NAVY, (row*SQUARE, col*SQUARE, SQUARE, SQUARE), 1) # borders/padding
 
     def new_board(self, win, state):

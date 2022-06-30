@@ -64,14 +64,14 @@ class Piece:
             row, col = self.row+direction, self.col
             if(not state[row][col]):
                 if(erase):
-                    board.draw_square(row, col, self.win, GREY if (row + col) % 2 == 0 else GREEN)
+                    board.draw_square(row, col, self.win, TILE_A if (row + col) % 2 == 0 else TILE_B)
                 avail_moves.append((row, col))
 
                 if(first_move):
                     if(not state[self.row+(2*direction)][self.col]):
                         row += direction
                         if(erase):
-                            board.draw_square(row, col, self.win, GREY if (row + col) % 2 == 0 else GREEN)
+                            board.draw_square(row, col, self.win, TILE_A if (row + col) % 2 == 0 else TILE_B)
                         avail_moves.append((row, col))
 
         # diagonal attack
@@ -81,7 +81,7 @@ class Piece:
             if(state[row][col]):
                 if(state[row][col].colour != state[self.row][self.col].colour):
                     if(erase):
-                        board.draw_selected_piece(row, col, self.win, GREY if (row + col) % 2 == 0 else GREEN, state)
+                        board.draw_selected_piece(row, col, self.win, TILE_A if (row + col) % 2 == 0 else TILE_B, state)
                     avail_moves.append((row, col))
 
         #right side
@@ -90,7 +90,7 @@ class Piece:
             if(state[row][col]):
                 if(state[row][col].colour != state[self.row][self.col].colour):
                     if(erase):
-                        board.draw_selected_piece(row, col, self.win, GREY if (row + col) % 2 == 0 else GREEN, state)
+                        board.draw_selected_piece(row, col, self.win, TILE_A if (row + col) % 2 == 0 else TILE_B, state)
                     avail_moves.append((row, col))
 
         return avail_moves
@@ -104,11 +104,11 @@ class Piece:
             if(state[row][col]):
                 if(state[row][col].colour != state[self.row][self.col].colour):
                     if(erase):
-                        board.draw_selected_piece(row, col, win, GREY if (row + col) % 2 == 0 else GREEN, state)
+                        board.draw_selected_piece(row, col, win, TILE_A if (row + col) % 2 == 0 else TILE_B, state)
                     avail_moves.append((row, col))
             else:
                 if(erase):
-                    board.draw_square(row, col, win, GREY if (row + col) % 2 == 0 else GREEN)
+                    board.draw_square(row, col, win, TILE_A if (row + col) % 2 == 0 else TILE_B)
                 avail_moves.append((row, col))
 
         if(self.row-2 >= 0 and self.col+1 < 8):
@@ -116,11 +116,11 @@ class Piece:
             if(state[row][col]):
                 if(state[row][col].colour != state[self.row][self.col].colour):
                     if(erase):
-                        board.draw_selected_piece(row, col, win, GREY if (row + col) % 2 == 0 else GREEN, state)
+                        board.draw_selected_piece(row, col, win, TILE_A if (row + col) % 2 == 0 else TILE_B, state)
                     avail_moves.append((row, col))
             else:
                 if(erase):
-                    board.draw_square(row, col, win, GREY if (row + col) % 2 == 0 else GREEN)
+                    board.draw_square(row, col, win, TILE_A if (row + col) % 2 == 0 else TILE_B)
                 avail_moves.append((row, col))
 
         #down side
@@ -129,11 +129,11 @@ class Piece:
             if(state[row][col]):
                 if(state[row][col].colour != state[self.row][self.col].colour):
                     if(erase):
-                        board.draw_selected_piece(row, col, win, GREY if (row + col) % 2 == 0 else GREEN, state)
+                        board.draw_selected_piece(row, col, win, TILE_A if (row + col) % 2 == 0 else TILE_B, state)
                     avail_moves.append((row, col))
             else:
                 if(erase):
-                    board.draw_square(row, col, win, GREY if (row + col) % 2 == 0 else GREEN)
+                    board.draw_square(row, col, win, TILE_A if (row + col) % 2 == 0 else TILE_B)
                 avail_moves.append((row, col))
 
         if(self.row+2 < 8 and self.col+1 < 8):
@@ -141,11 +141,11 @@ class Piece:
             if(state[row][col]):
                 if(state[row][col].colour != state[self.row][self.col].colour):
                     if(erase):
-                        board.draw_selected_piece(row, col, win, GREY if (row + col) % 2 == 0 else GREEN, state)
+                        board.draw_selected_piece(row, col, win, TILE_A if (row + col) % 2 == 0 else TILE_B, state)
                     avail_moves.append((row, col))
             else:
                 if(erase):
-                    board.draw_square(row, col, win, GREY if (row + col) % 2 == 0 else GREEN)
+                    board.draw_square(row, col, win, TILE_A if (row + col) % 2 == 0 else TILE_B)
                 avail_moves.append((row, col))
 
         #left side
@@ -154,11 +154,11 @@ class Piece:
             if(state[row][col]):
                 if(state[row][col].colour != state[self.row][self.col].colour):
                     if(erase):
-                        board.draw_selected_piece(row, col, win, GREY if (row + col) % 2 == 0 else GREEN, state)
+                        board.draw_selected_piece(row, col, win, TILE_A if (row + col) % 2 == 0 else TILE_B, state)
                     avail_moves.append((row, col))
             else:
                 if(erase):
-                    board.draw_square(row, col, win, GREY if (row + col) % 2 == 0 else GREEN)
+                    board.draw_square(row, col, win, TILE_A if (row + col) % 2 == 0 else TILE_B)
                 avail_moves.append((row, col))
 
         if(self.col-2 >= 0 and self.row+1 < 8):
@@ -166,11 +166,11 @@ class Piece:
             if(state[row][col]):
                 if(state[row][col].colour != state[self.row][self.col].colour):
                     if(erase):
-                        board.draw_selected_piece(row, col, win, GREY if (row + col) % 2 == 0 else GREEN, state)
+                        board.draw_selected_piece(row, col, win, TILE_A if (row + col) % 2 == 0 else TILE_B, state)
                     avail_moves.append((row, col))
             else:
                 if(erase):
-                    board.draw_square(row, col, win, GREY if (row + col) % 2 == 0 else GREEN)
+                    board.draw_square(row, col, win, TILE_A if (row + col) % 2 == 0 else TILE_B)
                 avail_moves.append((row, col))
 
         #right side
@@ -179,11 +179,11 @@ class Piece:
             if(state[row][col]):
                 if(state[row][col].colour != state[self.row][self.col].colour):
                     if(erase):
-                        board.draw_selected_piece(row, col, win, GREY if (row + col) % 2 == 0 else GREEN, state)
+                        board.draw_selected_piece(row, col, win, TILE_A if (row + col) % 2 == 0 else TILE_B, state)
                     avail_moves.append((row, col))
             else:
                 if(erase):
-                    board.draw_square(row, col, win, GREY if (row + col) % 2 == 0 else GREEN)
+                    board.draw_square(row, col, win, TILE_A if (row + col) % 2 == 0 else TILE_B)
                 avail_moves.append((row, col))
 
         if(self.col+2 < 8 and self.row+1 < 8):
@@ -191,11 +191,11 @@ class Piece:
             if(state[row][col]):
                 if(state[row][col].colour != state[self.row][self.col].colour):
                     if(erase):
-                        board.draw_selected_piece(row, col, win, GREY if (row + col) % 2 == 0 else GREEN, state)
+                        board.draw_selected_piece(row, col, win, TILE_A if (row + col) % 2 == 0 else TILE_B, state)
                     avail_moves.append((row, col))
             else:
                 if(erase):
-                    board.draw_square(row, col, win, GREY if (row + col) % 2 == 0 else GREEN)
+                    board.draw_square(row, col, win, TILE_A if (row + col) % 2 == 0 else TILE_B)
                 avail_moves.append((row, col))
 
         return avail_moves
@@ -209,7 +209,7 @@ class Piece:
         col = self.col - 1
         while(row >= 0 and col >= 0 and not state[row][col]):
             if(erase):
-                board.draw_square(row, col, win, GREY if (row + col) % 2 == 0 else GREEN)
+                board.draw_square(row, col, win, TILE_A if (row + col) % 2 == 0 else TILE_B)
             
             avail_moves.append((row, col))
             row -= 1
@@ -217,7 +217,7 @@ class Piece:
         if(row >= 0 and col >= 0):
             if(state[row][col].colour != self.colour):
                 if(erase):
-                    board.draw_selected_piece(row, col, win, GREY if (row + col) % 2 == 0 else GREEN, state)
+                    board.draw_selected_piece(row, col, win, TILE_A if (row + col) % 2 == 0 else TILE_B, state)
                 
                 avail_moves.append((row, col))
 
@@ -226,7 +226,7 @@ class Piece:
         col = self.col + 1
         while(row >= 0 and col < 8 and not state[row][col]):
             if(erase):
-                board.draw_square(row, col, win, GREY if (row + col) % 2 == 0 else GREEN)
+                board.draw_square(row, col, win, TILE_A if (row + col) % 2 == 0 else TILE_B)
             
             avail_moves.append((row, col))
             row -= 1
@@ -234,7 +234,7 @@ class Piece:
         if(row >= 0 and col < 8):
             if(state[row][col].colour != self.colour):
                 if(erase):
-                    board.draw_selected_piece(row, col, win, GREY if (row + col) % 2 == 0 else GREEN, state)
+                    board.draw_selected_piece(row, col, win, TILE_A if (row + col) % 2 == 0 else TILE_B, state)
                 
                 avail_moves.append((row, col))
 
@@ -243,7 +243,7 @@ class Piece:
         col = self.col + 1
         while(row < 8 and col < 8 and not state[row][col]):
             if(erase):
-                board.draw_square(row, col, win, GREY if (row + col) % 2 == 0 else GREEN)
+                board.draw_square(row, col, win, TILE_A if (row + col) % 2 == 0 else TILE_B)
             
             avail_moves.append((row, col))
             row += 1
@@ -251,7 +251,7 @@ class Piece:
         if(row < 8 and col < 8):
             if(state[row][col].colour != self.colour):
                 if(erase):
-                    board.draw_selected_piece(row, col, win, GREY if (row + col) % 2 == 0 else GREEN, state)
+                    board.draw_selected_piece(row, col, win, TILE_A if (row + col) % 2 == 0 else TILE_B, state)
                 
                 avail_moves.append((row, col))
 
@@ -260,7 +260,7 @@ class Piece:
         col = self.col - 1
         while(row < 8 and col >= 0 and not state[row][col]):
             if(erase):
-                board.draw_square(row, col, win, GREY if (row + col) % 2 == 0 else GREEN)
+                board.draw_square(row, col, win, TILE_A if (row + col) % 2 == 0 else TILE_B)
 
             avail_moves.append((row, col))
             row += 1
@@ -268,7 +268,7 @@ class Piece:
         if(row < 8 and col >= 0):
             if(state[row][col].colour != self.colour):
                 if(erase):
-                    board.draw_selected_piece(row, col, win, GREY if (row + col) % 2 == 0 else GREEN, state)
+                    board.draw_selected_piece(row, col, win, TILE_A if (row + col) % 2 == 0 else TILE_B, state)
 
                 avail_moves.append((row, col))
 
@@ -284,14 +284,14 @@ class Piece:
         row = self.row - 1
         while(row >= 0 and not state[row][col]):
             if(erase):
-                board.draw_square(row, col, win, GREY if (row + col) % 2 == 0 else GREEN)
+                board.draw_square(row, col, win, TILE_A if (row + col) % 2 == 0 else TILE_B)
             
             avail_moves.append((row, col))
             row -= 1
         if(row >= 0):
             if(state[row][col].colour != self.colour):
                 if(erase):
-                    board.draw_selected_piece(row, col, win, GREY if (row + col) % 2 == 0 else GREEN, state)
+                    board.draw_selected_piece(row, col, win, TILE_A if (row + col) % 2 == 0 else TILE_B, state)
 
                 avail_moves.append((row, col))
 
@@ -299,14 +299,14 @@ class Piece:
         row = self.row + 1
         while(row < 8 and not state[row][col]):
             if(erase):
-                board.draw_square(row, col, win, GREY if (row + col) % 2 == 0 else GREEN)
+                board.draw_square(row, col, win, TILE_A if (row + col) % 2 == 0 else TILE_B)
             
             avail_moves.append((row, col))
             row += 1
         if(row < 8):
             if(state[row][col].colour != self.colour):
                 if(erase):
-                    board.draw_selected_piece(row, col, win, GREY if (row + col) % 2 == 0 else GREEN, state)
+                    board.draw_selected_piece(row, col, win, TILE_A if (row + col) % 2 == 0 else TILE_B, state)
                 
                 avail_moves.append((row, col))
 
@@ -316,14 +316,14 @@ class Piece:
         col = self.col - 1
         while(col >= 0 and not state[row][col]):
             if(erase):
-                board.draw_square(row, col, win, GREY if (row + col) % 2 == 0 else GREEN)
+                board.draw_square(row, col, win, TILE_A if (row + col) % 2 == 0 else TILE_B)
             
             avail_moves.append((row, col))
             col -= 1
         if(col >= 0):
             if(state[row][col].colour != self.colour):
                 if(erase):
-                    board.draw_selected_piece(row, col, win, GREY if (row + col) % 2 == 0 else GREEN, state)
+                    board.draw_selected_piece(row, col, win, TILE_A if (row + col) % 2 == 0 else TILE_B, state)
                 
                 avail_moves.append((row, col))
         
@@ -331,14 +331,14 @@ class Piece:
         col = self.col + 1
         while(col < 8 and not state[row][col]):
             if(erase):
-                board.draw_square(row, col, win, GREY if (row + col) % 2 == 0 else GREEN)
+                board.draw_square(row, col, win, TILE_A if (row + col) % 2 == 0 else TILE_B)
             
             avail_moves.append((row, col))
             col += 1
         if(col < 8):
             if(state[row][col].colour != self.colour):
                 if(erase):
-                    board.draw_selected_piece(row, col, win, GREY if (row + col) % 2 == 0 else GREEN, state)
+                    board.draw_selected_piece(row, col, win, TILE_A if (row + col) % 2 == 0 else TILE_B, state)
                 
                 avail_moves.append((row, col))
 
@@ -368,11 +368,11 @@ class Piece:
                     pass
                 else:
                     if(erase):
-                        board.draw_selected_piece(self.row-1, self.col, win, GREY if (self.row-1 + self.col) % 2 == 0 else GREEN, state)
+                        board.draw_selected_piece(self.row-1, self.col, win, TILE_A if (self.row-1 + self.col) % 2 == 0 else TILE_B, state)
                     avail_moves.append((self.row-1, self.col))
             else:
                 if(erase):
-                    board.draw_square(self.row-1, self.col, win, GREY if (self.row-1 + self.col) % 2 == 0 else GREEN)
+                    board.draw_square(self.row-1, self.col, win, TILE_A if (self.row-1 + self.col) % 2 == 0 else TILE_B)
                 avail_moves.append((self.row-1, self.col))
         if(self.row+1 < 8):
             right = True
@@ -381,11 +381,11 @@ class Piece:
                     pass
                 else:
                     if(erase):
-                        board.draw_selected_piece(self.row+1, self.col, win, GREY if (self.row+1 + self.col) % 2 == 0 else GREEN, state)
+                        board.draw_selected_piece(self.row+1, self.col, win, TILE_A if (self.row+1 + self.col) % 2 == 0 else TILE_B, state)
                     avail_moves.append((self.row+1, self.col))
             else:
                 if(erase):
-                    board.draw_square(self.row+1, self.col, win, GREY if (self.row+1 + self.col) % 2 == 0 else GREEN)
+                    board.draw_square(self.row+1, self.col, win, TILE_A if (self.row+1 + self.col) % 2 == 0 else TILE_B)
                 avail_moves.append((self.row+1, self.col))
         if(self.col-1 >= 0):
             up = True
@@ -394,11 +394,11 @@ class Piece:
                     pass
                 else:
                     if(erase):
-                        board.draw_selected_piece(self.row, self.col-1, win, GREY if (self.row + self.col-1) % 2 == 0 else GREEN, state)
+                        board.draw_selected_piece(self.row, self.col-1, win, TILE_A if (self.row + self.col-1) % 2 == 0 else TILE_B, state)
                     avail_moves.append((self.row, self.col-1))
             else:
                 if(erase):
-                    board.draw_square(self.row, self.col-1, win, GREY if (self.row + self.col-1) % 2 == 0 else GREEN)
+                    board.draw_square(self.row, self.col-1, win, TILE_A if (self.row + self.col-1) % 2 == 0 else TILE_B)
                 avail_moves.append((self.row, self.col-1))
         if(self.col+1 < 8):
             down = True
@@ -407,11 +407,11 @@ class Piece:
                     pass
                 else:
                     if(erase):
-                        board.draw_selected_piece(self.row, self.col+1, win, GREY if (self.row + self.col+1) % 2 == 0 else GREEN, state)
+                        board.draw_selected_piece(self.row, self.col+1, win, TILE_A if (self.row + self.col+1) % 2 == 0 else TILE_B, state)
                     avail_moves.append((self.row, self.col+1))
             else:
                 if(erase):
-                    board.draw_square(self.row, self.col+1, win, GREY if (self.row + self.col+1) % 2 == 0 else GREEN)
+                    board.draw_square(self.row, self.col+1, win, TILE_A if (self.row + self.col+1) % 2 == 0 else TILE_B)
                 avail_moves.append((self.row, self.col+1))
 
         # diagonals
@@ -421,11 +421,11 @@ class Piece:
                     pass
                 else:
                     if(erase):
-                        board.draw_selected_piece(self.row-1, self.col-1, win, GREY if (self.row-1 + self.col-1) % 2 == 0 else GREEN, state)
+                        board.draw_selected_piece(self.row-1, self.col-1, win, TILE_A if (self.row-1 + self.col-1) % 2 == 0 else TILE_B, state)
                     avail_moves.append((self.row-1, self.col-1))
             else:
                 if(erase):
-                    board.draw_square(self.row-1, self.col-1, win, GREY if (self.row-1 + self.col-1) % 2 == 0 else GREEN)
+                    board.draw_square(self.row-1, self.col-1, win, TILE_A if (self.row-1 + self.col-1) % 2 == 0 else TILE_B)
                 avail_moves.append((self.row-1, self.col-1))
 
         if(right and up):
@@ -434,11 +434,11 @@ class Piece:
                     pass
                 else:
                     if(erase):
-                        board.draw_selected_piece(self.row+1, self.col-1, win, GREY if (self.row+1 + self.col-1) % 2 == 0 else GREEN, state)
+                        board.draw_selected_piece(self.row+1, self.col-1, win, TILE_A if (self.row+1 + self.col-1) % 2 == 0 else TILE_B, state)
                     avail_moves.append((self.row+1, self.col-1))
             else:
                 if(erase):
-                    board.draw_square(self.row+1, self.col-1, win, GREY if (self.row+1 + self.col-1) % 2 == 0 else GREEN)
+                    board.draw_square(self.row+1, self.col-1, win, TILE_A if (self.row+1 + self.col-1) % 2 == 0 else TILE_B)
                 avail_moves.append((self.row+1, self.col-1))
 
         if(left and down):
@@ -447,11 +447,11 @@ class Piece:
                     pass
                 else:
                     if(erase):
-                        board.draw_selected_piece(self.row-1, self.col+1, win, GREY if (self.row-1 + self.col+1) % 2 == 0 else GREEN, state)
+                        board.draw_selected_piece(self.row-1, self.col+1, win, TILE_A if (self.row-1 + self.col+1) % 2 == 0 else TILE_B, state)
                     avail_moves.append((self.row-1, self.col+1))
             else:
                 if(erase):
-                    board.draw_square(self.row-1, self.col+1, win, GREY if (self.row-1 + self.col+1) % 2 == 0 else GREEN)
+                    board.draw_square(self.row-1, self.col+1, win, TILE_A if (self.row-1 + self.col+1) % 2 == 0 else TILE_B)
                 avail_moves.append((self.row-1, self.col+1))
 
         if(right and down):
@@ -460,11 +460,11 @@ class Piece:
                     pass
                 else:
                     if(erase):
-                        board.draw_selected_piece(self.row+1, self.col+1, win, GREY if (self.row+1 + self.col+1) % 2 == 0 else GREEN, state)
+                        board.draw_selected_piece(self.row+1, self.col+1, win, TILE_A if (self.row+1 + self.col+1) % 2 == 0 else TILE_B, state)
                     avail_moves.append((self.row+1, self.col+1))
             else:
                 if(erase):
-                    board.draw_square(self.row+1, self.col+1, win, GREY if (self.row+1 + self.col+1) % 2 == 0 else GREEN)
+                    board.draw_square(self.row+1, self.col+1, win, TILE_A if (self.row+1 + self.col+1) % 2 == 0 else TILE_B)
                 avail_moves.append((self.row+1, self.col+1))
 
         return avail_moves
