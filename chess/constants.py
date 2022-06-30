@@ -37,15 +37,17 @@ game_over = False
 # ---
 
 # CUSTOMIZABLE BOARD COLOURS!
-# choose any colour codes and set them to these variables however you'd like. Have fun with it :)
-# uncomment the variables below to begin!
+# choose any colour codes and set them to the variables below however you'd like. Have fun with it :)
+# comment out the very last line below to begin!
 
 # customize board colours here:
-# TILE_A = (240, 233, 216)
-# TILE_B = 0x425fe3
-# MOVES = 0xf2cf66
-# CHECK = 0xa60515
-# MATE = 0xe0d31b
-# LOSE = 0xa3926f
-# PIECE_SELECTED = 0x193852
-# PADDING = 0x2e1f4f
+TILE_A = (240, 233, 216)
+TILE_B = 0x425fe3
+MOVES = 0xf2cf66
+CHECK = 0xa60515
+MATE = 0xe0d31b
+LOSE = 0xa3926f
+PIECE_SELECTED = 0x193852
+PADDING = 0x2e1f4f
+
+TILE_A, TILE_B, MOVES, CHECK, MATE, LOSE, PIECE_SELECTED, PADDING = GREY, GREEN, ORANGE, RED, GOLD, BROWN, PURPLE, NAVY
