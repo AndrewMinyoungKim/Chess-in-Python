@@ -82,14 +82,14 @@ class Game:
     def display_available_moves(self):
         for i in range(len(self.available_moves)):
             if(self.state[self.available_moves[i][0]][self.available_moves[i][1]]):
-                self.board.draw_selected_piece(self.available_moves[i][0], self.available_moves[i][1], self.win, ORANGE, self.state)
+                self.board.draw_selected_piece(self.available_moves[i][0], self.available_moves[i][1], self.win, MOVES, self.state)
             else:
-                self.board.draw_square(self.available_moves[i][0], self.available_moves[i][1], self.win, ORANGE)
+                self.board.draw_square(self.available_moves[i][0], self.available_moves[i][1], self.win, MOVES)
 
     def select_piece(self, row, col):
         self.selected = True
         self.selected_x, self.selected_y = row, col
-        self.board.draw_selected_piece(row, col, self.win, PURPLE, self.state)
+        self.board.draw_selected_piece(row, col, self.win, PIECE_SELECTED, self.state)
 
         erase = False
         del(self.available_moves)
@@ -339,7 +339,7 @@ class Game:
 
     def __game_over(self):
         if(self.checkmate):
-            self.colour_king_in_check(BROWN)
+            self.colour_king_in_check(LOSE)
             print("CHECKMATE")
             if(self.turn != WHITE): # the turn was switched before calling function, used for finding any possible moves
                 winner = "White"
@@ -347,13 +347,13 @@ class Game:
             else:
                 winner = "Black"
                 hue = 0
-            self.board.draw_selected_piece(self.check.king[hue].row, self.check.king[hue].col, self.win, GOLD, self.state)
+            self.board.draw_selected_piece(self.check.king[hue].row, self.check.king[hue].col, self.win, MATE, self.state)
             print(f"Winner!: {winner}")
         
         elif(self.stalemate):
             print("STALEMATE")
-            self.board.draw_selected_piece(self.check.king[0].row, self.check.king[0].col, self.win, BROWN, self.state)
-            self.board.draw_selected_piece(self.check.king[1].row, self.check.king[1].col, self.win, BROWN, self.state)
+            self.board.draw_selected_piece(self.check.king[0].row, self.check.king[0].col, self.win, LOSE, self.state)
+            self.board.draw_selected_piece(self.check.king[1].row, self.check.king[1].col, self.win, LOSE, self.state)
             print("You're all losers!")
 
         print("-- Game Over --")
