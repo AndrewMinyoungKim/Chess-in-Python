@@ -34,6 +34,10 @@ class Game:
         #stalemate if all pieces are gone except the two kings
         self.num_black_pieces, self.num_white_pieces = 16, 16
 
+        # sound effect: new game
+        pygame.mixer.init()
+        pygame.mixer.Channel(1).play(pygame.mixer.Sound('assets/new game.wav'))
+
         self.debug = Debugger()
 
     def update(self):
@@ -109,6 +113,9 @@ class Game:
         # delete the opponent piece in square if(attack == True)
         if(attack):
             self.take_piece(row, col)
+            pygame.mixer.Channel(0).play(pygame.mixer.Sound('assets/capture.wav'))
+        else:
+            pygame.mixer.Channel(0).play(pygame.mixer.Sound('assets/move.wav'))
         
         # disables en_passant next turn after en passant is enabled
         if(self.special_moves.en_passant):
@@ -119,6 +126,7 @@ class Game:
                 else:
                     en_passant_victim_row = self.special_moves.row_en_passant + 1 # == 3
                 self.take_piece(en_passant_victim_row, col)
+                pygame.mixer.Channel(0).play(pygame.mixer.Sound('assets/capture.wav'))
                 self.board.draw_square(en_passant_victim_row, col, self.win, GREY if (en_passant_victim_row + col) % 2 == 0 else GREEN)
                     
             self.special_moves.en_passant = False
@@ -144,6 +152,7 @@ class Game:
                 rook_new_col = 5
             # move the rook in castle
             self.switch_places(row, rook_start_col, row, rook_new_col)
+            pygame.mixer.Channel(0).play(pygame.mixer.Sound('assets/castle.wav'))
 
         # make the switch
         self.switch_places(self.selected_x, self.selected_y, row, col)
@@ -298,6 +307,13 @@ class Game:
 
                 # if no moves available for player, check if any move available anywhere, if not, checkmate or stalemate
                 self._detect_checkmate()
+
+                if(self.checkmate):
+                    pygame.mixer.Channel(0).play(pygame.mixer.Sound('assets/checkmate.wav'))
+                elif(self.stalemate):
+                    pygame.mixer.Channel(0).play(pygame.mixer.Sound('assets/stalemate.wav'))
+                elif(self.check.check):
+                    pygame.mixer.Channel(0).play(pygame.mixer.Sound('assets/check.wav'))
 
         return (self.checkmate or self.stalemate)
 
