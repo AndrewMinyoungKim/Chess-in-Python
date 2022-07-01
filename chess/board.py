@@ -4,9 +4,6 @@ from .constants import *
 from .piece import Piece
 
 class Board:
-    def __init__(self):
-        pass
-
     def draw_square(self, row, col, win, colour):
         pygame.draw.rect(win, colour, (col*SQUARE, row*SQUARE, SQUARE, SQUARE))
         pygame.draw.rect(win, PADDING, (col*SQUARE, row*SQUARE, SQUARE, SQUARE), 1) # borders

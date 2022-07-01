@@ -20,14 +20,7 @@ class Piece:
         self.draw_piece(self.win)
 
     def __del__(self):
-        # remove this and the "game_over" variable from constants.py once notation.py is implemented & completed
-        if(not game_over):
-            # different convenient ways to print a message with variables
-            # print(self.colour_word, self.name, "taken")
-            # print("The {0} {1} has been captured".format(self.colour_word, self.name))
-            # print("The {} {} has been captured".format(self.colour_word, self.name))
-            # print("The {colour} {piece} has been captured".format(colour = self.colour_word, piece = self.name))
-            print(f"The {self.colour_word} {self.name} has been captured") # most convenient way imo, "f-strings"
+        pass
 
     def calc_pos(self):
         self.x = SQUARE * self.col + SQUARE // 2

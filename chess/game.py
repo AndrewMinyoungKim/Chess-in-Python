@@ -26,17 +26,13 @@ class Game:
         self.available_moves = []
         # check for castles, promotions, en passants
         self.special_moves = SpecialMoves()
-        self.display_notation = Notation()
+        self.notation = Notation()
 
         # check for legal moves, any checks, and checkmates
         self.check = Check(state)
         self.checkmate, self.stalemate = False, False
         #stalemate if all pieces are gone except the two kings
         self.num_black_pieces, self.num_white_pieces = 16, 16
-
-        # sound effect: new game
-        pygame.mixer.init()
-        pygame.mixer.Channel(1).play(pygame.mixer.Sound('assets/new game.wav'))
 
         self.debug = Debugger()
 
@@ -47,6 +43,7 @@ class Game:
         if(self.state[row][col].name == 'P'):
             if(self.state[row][col].colour == BLACK and row == 0):
                 self.state[row][col].name = self.special_moves.promotion(row, col)
+                self.notation.pawn_promotion = self.state[row][col].name
                 self.board.draw_selected_piece(row, col, self.win, TILE_A if (row + col) % 2 == 0 else TILE_B, self.state)
             elif(self.state[row][col].colour == WHITE and row == 7):
                 self.state[row][col].name = self.special_moves.promotion(row, col)
@@ -113,9 +110,9 @@ class Game:
         # delete the opponent piece in square if(attack == True)
         if(attack):
             self.take_piece(row, col)
-            pygame.mixer.Channel(0).play(pygame.mixer.Sound('assets/capture.wav'))
+            self.notation.moves["capture"] = True
         else:
-            pygame.mixer.Channel(0).play(pygame.mixer.Sound('assets/move.wav'))
+            self.notation.moves["move"] = True
         
         # disables en_passant next turn after en passant is enabled
         if(self.special_moves.en_passant):
@@ -126,9 +123,11 @@ class Game:
                 else:
                     en_passant_victim_row = self.special_moves.row_en_passant + 1 # == 3
                 self.take_piece(en_passant_victim_row, col)
-                pygame.mixer.Channel(0).play(pygame.mixer.Sound('assets/capture.wav'))
+                self.notation.moves["capture"] = True
+                self.notation.en_passant = True
                 self.board.draw_square(en_passant_victim_row, col, self.win, TILE_A if (en_passant_victim_row + col) % 2 == 0 else TILE_B)
-                    
+
+            self.board.draw_square(self.special_moves.row_en_passant, self.special_moves.col_en_passant, self.win, TILE_A if (self.special_moves.row_en_passant + self.special_moves.col_en_passant) % 2 == 0 else TILE_B)
             self.special_moves.en_passant = False
             self.special_moves.row_en_passant, self.special_moves.col_en_passant = None, None
 
@@ -147,12 +146,13 @@ class Game:
             if(col == 2):
                 rook_start_col = 0
                 rook_new_col = 3
+                self.notation.moves["queenside-castle"] = True
             elif(col == 6):
                 rook_start_col = 7
                 rook_new_col = 5
+                self.notation.moves["kingside-castle"] = True
             # move the rook in castle
             self.switch_places(row, rook_start_col, row, rook_new_col)
-            pygame.mixer.Channel(0).play(pygame.mixer.Sound('assets/castle.wav'))
 
         # make the switch
         self.switch_places(self.selected_x, self.selected_y, row, col)
@@ -247,6 +247,7 @@ class Game:
             if(not self.special_moves.white_queenside_castle and not self.special_moves.white_kingside_castle):
                 self.special_moves.white_castle = False
         
+        self.notation.old_row, self.notation.old_col = self.selected_x, self.selected_y
         self.reset_selected_moves()
         return successful_turn
 
@@ -299,21 +300,20 @@ class Game:
             if(successful_turn):
                 if(self.turn == WHITE):
                     self.turn = BLACK
-                    self.display_notation.display_move(self.state, row, col, "Black") # colour := "Black"
-
                 else:
                     self.turn = WHITE
-                    self.display_notation.display_move(self.state, row, col, "White") # colour := "White"
 
                 # if no moves available for player, check if any move available anywhere, if not, checkmate or stalemate
                 self._detect_checkmate()
 
                 if(self.checkmate):
-                    pygame.mixer.Channel(0).play(pygame.mixer.Sound('assets/checkmate.wav'))
+                    self.notation.moves["checkmate"] = True
                 elif(self.stalemate):
-                    pygame.mixer.Channel(0).play(pygame.mixer.Sound('assets/stalemate.wav'))
+                    self.notation.moves["stalemate"] = True
                 elif(self.check.check):
-                    pygame.mixer.Channel(0).play(pygame.mixer.Sound('assets/check.wav'))
+                    self.notation.moves["check"] = True
+
+                self.notation.display_move(self.state, row, col, "White" if self.turn == BLACK else "Black")
 
         return (self.checkmate or self.stalemate)
 
@@ -357,4 +357,3 @@ class Game:
             print("You're all losers!")
 
         print("-- Game Over --")
-        game_over = True
