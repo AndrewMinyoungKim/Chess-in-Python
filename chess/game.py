@@ -198,7 +198,6 @@ class Game:
         # check for checks
         self.check.check_check(self.state, self.turn)
         if(self.check.check):
-            print("CHECK!")
             self.colour_king_in_check(RED)
 
         # check for lost ability to castle
@@ -340,20 +339,14 @@ class Game:
     def __game_over(self):
         if(self.checkmate):
             self.colour_king_in_check(LOSE)
-            print("CHECKMATE")
             if(self.turn != WHITE): # the turn was switched before calling function, used for finding any possible moves
-                winner = "White"
+                self.notation.winner = "White"
                 hue = 1
             else:
-                winner = "Black"
+                self.notation.winner = "Black"
                 hue = 0
             self.board.draw_selected_piece(self.check.king[hue].row, self.check.king[hue].col, self.win, MATE, self.state)
-            print(f"Winner!: {winner}")
         
         elif(self.stalemate):
-            print("STALEMATE")
             self.board.draw_selected_piece(self.check.king[0].row, self.check.king[0].col, self.win, LOSE, self.state)
             self.board.draw_selected_piece(self.check.king[1].row, self.check.king[1].col, self.win, LOSE, self.state)
-            print("You're all losers!")
-
-        print("-- Game Over --")

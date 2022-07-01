@@ -354,7 +354,7 @@ class Check:
 
         # impossible to have two pins for one piece, either only straight or only diagonal for a pinned piece
         if(rook_pin):
-            print(f"Pin: {FILE[rook_pin.col]}{rook_pin.row+1}")
+            #print(f"Pin: {FILE[rook_pin.col]}{rook_pin.row+1}")
             if(state[row][col].name == 'Q' or state[row][col].name == 'R'):
                 self.get_straight_pin_movement(state, row, col, available_moves, rook_pin)
             elif(state[row][col].name == 'P'):
@@ -368,7 +368,7 @@ class Check:
                 available_moves.clear()
 
         elif(bishop_pin):
-            print(f"Pin: {FILE[bishop_pin.col]}{bishop_pin.row+1}")
+            #print(f"Pin: {FILE[bishop_pin.col]}{bishop_pin.row+1}")
             if(state[row][col].name == 'Q' or state[row][col].name == 'B'):
                 self.get_diagonal_pin_movement(state, row, col, available_moves, bishop_pin)
             elif(state[row][col].name == 'P'):

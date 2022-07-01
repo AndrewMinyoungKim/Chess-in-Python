@@ -14,6 +14,7 @@ class Notation:
         self.old_row, self.old_col = None, None
         self.en_passant = False
         self.pawn_promotion = None
+        self.winner = None
 
         # maybe in the future, take account for disambiguating moves? e.g. both rooks on same rank. one moves to a square on same rank?
 
@@ -41,6 +42,7 @@ class Notation:
                     else:
                         print(f"{colour}: {state[row][col].name}x{FILE[col]}{row+1}#")
             pygame.mixer.Channel(0).play(pygame.mixer.Sound('assets/checkmate.wav'))
+            self.end()
         
         elif(self.moves["stalemate"]):
             if(self.moves["move"]):
@@ -63,6 +65,7 @@ class Notation:
                     else:
                         print(f"{colour}: {state[row][col].name}x{FILE[col]}{row+1}=")
             pygame.mixer.Channel(0).play(pygame.mixer.Sound('assets/stalemate.wav'))
+            self.end()
         
         elif(self.moves["check"]):
             if(self.moves["move"]):
@@ -136,3 +139,11 @@ class Notation:
         self.old_row, self.old_col = None, None
         self.en_passant = False
         self.pawn_promotion = None
+
+    def end(self):
+        if(self.winner):
+            print(f"Winner: {self.winner}")
+        else:
+            print("Stalemate. You're all losers!")
+
+        print("-- Game Over --")
